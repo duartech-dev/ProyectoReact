@@ -1,0 +1,33 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+  padding: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border: none;
+  border-radius: 1rem;
+}
+
+.login-card .btn {
+  font-weight: 600;
+}
+
+.login-card .google-btn {
+  background-color: #4285F4;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-card .form-label {
+  font-weight: 500;
+}
+
+.login-card .invalid-feedback {
+  font-size: 0.875rem;
+}

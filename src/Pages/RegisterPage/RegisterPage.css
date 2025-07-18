@@ -1,0 +1,24 @@
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #22c55e 0%, #14b8a6 100%);
+  padding: 2rem;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 420px;
+  border: none;
+  border-radius: 1rem;
+}
+
+.register-card .btn {
+  font-weight: 600;
+}
+
+.register-card .form-label {
+  font-weight: 500;
+}
+
+.register-card .invalid-feedback {
+  font-size: 0.875rem;
+}
