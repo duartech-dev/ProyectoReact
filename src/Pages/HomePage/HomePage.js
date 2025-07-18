@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import './HomePage.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import interiorImg from '../../images/descarga.jpeg';
+// Imágenes para el carrusel y productos desde public/assets
+const carouselImages = [
+  '/assets/22-ABRIL-scaled-1.jpg',
+  '/assets/7781eb708430bcc50d1885aee17f1c14.jpg',
+  '/assets/Aline.jpeg',
+];
  
 // Lista de categorías (se puede extender fácilmente)
 const categories = [
@@ -24,35 +29,7 @@ const products = [
     description: 'Mueble de noche 2 cajones',
     category: 'Muebles',
     price: 1540,
-    image:
-      "/src/images/descarga.jpeg",
-  },
-    {
-    id: 1,
-    name: 'Buró',
-    description: 'Mueble de noche 2 cajones',
-    category: 'Muebles',
-    price: 1540,
-    image:
-      '/public/logo192.png',
-  },
-    {
-    id: 1,
-    name: 'Buró',
-    description: 'Mueble de noche 2 cajones',
-    category: 'Muebles',
-    price: 1540,
-    image:
-      'https://images.unsplash.com/photo-1598300059654-34ac8e2eb274?auto=format&fit=crop&w=500&q=60',
-  },
-    {
-    id: 1,
-    name: 'Buró',
-    description: 'Mueble de noche 2 cajones',
-    category: 'Muebles',
-    price: 1540,
-    image:
-      'https://images.unsplash.com/photo-1598300059654-34ac8e2eb274?auto=format&fit=crop&w=500&q=60',
+    image: '/assets/22-ABRIL-scaled-1.jpg',
   },
   {
     id: 2,
@@ -60,8 +37,7 @@ const products = [
     description: 'Mueble con repisas',
     category: 'Muebles',
     price: 2320,
-    image:
-      'https://images.unsplash.com/photo-1600585154264-4153fd8fad65?auto=format&fit=crop&w=500&q=60',
+    image: '/assets/7781eb708430bcc50d1885aee17f1c14.jpg',
   },
   {
     id: 3,
@@ -69,8 +45,7 @@ const products = [
     description: 'Mueble 3 cajones',
     category: 'Muebles',
     price: 3060,
-    image:
-      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=60',
+    image: '/assets/Aline.jpeg',
   },
   {
     id: 4,
@@ -78,8 +53,7 @@ const products = [
     description: 'Gabinete de baño',
     category: 'Baños',
     price: 2785,
-    image:
-      'https://images.unsplash.com/photo-1616486073187-0cfa30ac29b1?auto=format&fit=crop&w=500&q=60',
+    image: '/assets/Iris.jpeg',
   },
   {
     id: 5,
@@ -87,8 +61,7 @@ const products = [
     description: 'Isla central con madera',
     category: 'Cocina',
     price: 4800,
-    image:
-      'https://images.unsplash.com/photo-1593808065432-65ba9c6753e9?auto=format&fit=crop&w=500&q=60',
+    image: '/assets/Mich.jpeg',
   },
 ];
 
@@ -178,12 +151,11 @@ function HomePage({ userEmail, onLogout }) {
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
           </div>
           <div className="carousel-inner rounded shadow-sm">
-            <div className="carousel-item active">
-              <img src={interiorImg} className="d-block w-100" alt="interior 1" />
-            </div>
-            <div className="carousel-item">
-              <img src="/src/images/descarga.jpeg" className="d-block w-100" alt="interior 2" />
-            </div>
+            {carouselImages.map((img, idx) => (
+              <div className={`carousel-item${idx === 0 ? ' active' : ''}`} key={img}>
+                <img src={img} className="d-block w-100" alt={`slide ${idx + 1}`} />
+              </div>
+            ))}
           </div>
           <button className="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
