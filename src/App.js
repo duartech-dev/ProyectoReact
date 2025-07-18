@@ -10,6 +10,8 @@ import PromotionsPage from './Pages/PromotionsPage/PromotionsPage';
 import ContactPage from './Pages/ContactPage/ContactPage';
 import CheckoutPage from './Pages/CheckoutPage/CheckoutPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+import ProjectsPage from './Pages/ProjectsPage/ProjectsPage';
+import ProjectsProtectedRoute from './Pages/ProjectsPage/ProjectsProtectedRoute';
 
 function App() {
   const navigate = useNavigate();
@@ -37,6 +39,11 @@ function App() {
           <Route path="/store" element={<StorePage userEmail={userEmail} onLogout={handleLogout} />} />
           <Route path="/promotions" element={<PromotionsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/proyectos/*" element={
+            <ProjectsProtectedRoute userEmail={userEmail}>
+              <ProjectsPage />
+            </ProjectsProtectedRoute>
+          } />
         </Routes>
       ) : authView === 'login' ? (
         <LoginPage

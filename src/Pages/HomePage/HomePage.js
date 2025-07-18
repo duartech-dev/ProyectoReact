@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import './HomePage.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import ProjectsMenu from '../ProjectsPage/ProjectsMenu';
 // Imágenes para el carrusel y productos desde public/assets
 const carouselImages = [
   '/assets/22-ABRIL-scaled-1.jpg',
@@ -105,6 +106,7 @@ function HomePage({ userEmail, onLogout }) {
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <ProjectsMenu />
               <li className="nav-item">
                 <span className="nav-link active" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
                   Inicio
