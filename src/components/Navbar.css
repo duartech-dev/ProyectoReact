@@ -1,0 +1,104 @@
+/* ================== NAVBAR ================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 12px 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.navbar .logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.menu-main {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  gap: 20px;
+}
+
+.menu-main li {
+  position: relative;
+}
+
+.menu-main a {
+  text-decoration: none;
+  color: #777;
+  padding: 4px 8px;
+  display: block;
+  transition: color 0.2s ease;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.menu-main a:hover {
+  color: #333;
+}
+
+/* Email del usuario */
+.user-email {
+  color: #777;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* Carrito */
+.cart-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: #777;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.cart-link:hover {
+  color: #333;
+}
+
+/* Iconos del navbar */
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(0.6);
+}
+
+/* Botón cerrar sesión */
+.menu-main li:last-child a {
+  background: white;
+  color: #777;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  border: 1px solid #ddd;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.menu-main li:last-child a:hover {
+  background: #f8f8f8;
+  color: #333;
+  border-color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 20px;
+  }
+  
+  .menu-main {
+    gap: 15px;
+  }
+}

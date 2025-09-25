@@ -12,13 +12,18 @@ import CheckoutPage from './Pages/CheckoutPage/CheckoutPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import ProjectsPage from './Pages/ProjectsPage/ProjectsPage';
 import ProjectsProtectedRoute from './Pages/ProjectsPage/ProjectsProtectedRoute';
+import Navbar from './components/Navbar';
 
 function App() {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState(null);
   const [authView, setAuthView] = useState('login');
 
+  // Debug: verificar estado inicial
+  console.log('App state:', { userEmail, authView });
+
   const handleLoginSuccess = (email) => {
+    console.log('Login success with email:', email);
     setUserEmail(email);
     navigate('/');
   };
@@ -31,20 +36,25 @@ function App() {
   return (
     <div className="App">
       {userEmail ? (
-        <Routes>
-          <Route path="/" element={<HomePage userEmail={userEmail} onLogout={handleLogout} />} />
-          <Route path="/product/:id" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage onLogout={handleLogout} />} />
-          <Route path="/checkout" element={<CheckoutPage userEmail={userEmail} />} />
-          <Route path="/store" element={<StorePage userEmail={userEmail} onLogout={handleLogout} />} />
-          <Route path="/promotions" element={<PromotionsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/proyectos/*" element={
-            <ProjectsProtectedRoute userEmail={userEmail}>
-              <ProjectsPage />
-            </ProjectsProtectedRoute>
-          } />
-        </Routes>
+        <>
+          <Navbar userEmail={userEmail} onLogout={handleLogout} />
+          <div style={{ marginTop: '80px' }}>
+            <Routes>
+              <Route path="/" element={<HomePage userEmail={userEmail} onLogout={handleLogout} />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/cart" element={<CartPage onLogout={handleLogout} />} />
+              <Route path="/checkout" element={<CheckoutPage userEmail={userEmail} />} />
+              <Route path="/store" element={<StorePage userEmail={userEmail} onLogout={handleLogout} />} />
+              <Route path="/promotions" element={<PromotionsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/proyectos/*" element={
+                <ProjectsProtectedRoute userEmail={userEmail}>
+                  <ProjectsPage />
+                </ProjectsProtectedRoute>
+              } />
+            </Routes>
+          </div>
+        </>
       ) : authView === 'login' ? (
         <LoginPage
           onLoginSuccess={handleLoginSuccess}
