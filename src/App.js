@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
-import LoginPage from './Pages/LoginPage/LoginPage';
-import RegisterPage from './Pages/RegisterPage/RegisterPage';
+import './Pages/HomePage/HomePage.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import SesionPage from './Pages/Sesion/SesionPage';
 import AdminPage from './Pages/Admin/AdminPage';
 import AdminProtectedRoute from './Pages/Admin/AdminProtectedRoute';
 import HomePage from './Pages/HomePage/HomePage';
@@ -19,9 +21,8 @@ import Navbar from './components/Navbar';
 function App() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [authView, setAuthView] = useState('login');
 
-  console.log('App state:', { user, authView });
+  console.log('App state:', { user });
 
   const handleLoginSuccess = (userObj) => {
     console.log('Login success with user:', userObj);
@@ -30,7 +31,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    setAuthView('login');
     setUser(null);
   };
 
@@ -61,13 +61,8 @@ function App() {
             </Routes>
           </div>
         </>
-      ) : authView === 'login' ? (
-        <LoginPage
-          onLoginSuccess={handleLoginSuccess}
-          switchToRegister={() => setAuthView('register')}
-        />
       ) : (
-        <RegisterPage switchToLogin={() => setAuthView('login')} />
+        <SesionPage onLoginSuccess={handleLoginSuccess} />
       )}
     </div>
   );

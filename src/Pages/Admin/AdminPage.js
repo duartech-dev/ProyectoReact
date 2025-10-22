@@ -70,7 +70,7 @@ const AdminPage = () => {
           <textarea className="form-control" name="description" value={form.description} onChange={handleChange} />
         </div>
         <div className="col-12">
-          <button className="btn btn-primary">Agregar producto</button>
+          <button className="btn btn-dark">Agregar producto</button>
         </div>
       </form>
 

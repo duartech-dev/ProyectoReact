@@ -134,7 +134,7 @@ const CheckoutPage = ({ userEmail }) => {
     return (
       <div className="container py-5 text-center">
         <h2 className="fw-bold mb-3">¡Gracias por tu compra! 🥳</h2>
-        <button className="btn btn-primary" onClick={() => navigate('/')}>Volver al inicio</button>
+        <button className="btn btn-dark" onClick={() => navigate('/')}>Volver al inicio</button>
       </div>
     );
   }
@@ -168,9 +168,9 @@ const CheckoutPage = ({ userEmail }) => {
       {/* Botones de PayPal */}
       <div id="paypal-buttons-container" className="mb-4 text-center"></div>
 
-      <button className="btn btn-outline-secondary" onClick={() => navigate('/cart')}>Volver al carrito</button>
+      <button className="btn btn-outline-dark" onClick={() => navigate('/cart')}>Volver al carrito</button>
       {/* Simulamos pago éxito temporal */}
-      <button className="btn btn-primary ms-2" onClick={() => { setPaid(true); saveOrder({ userEmail, items: cartItems, total: totalPrice }).catch(console.error); clearCart(); }}>
+      <button className="btn btn-dark ms-2" onClick={() => { setPaid(true); saveOrder({ userEmail, items: cartItems, total: totalPrice }).catch(console.error); clearCart(); }}>
         Simular pago (dev)
       </button>
     </div>

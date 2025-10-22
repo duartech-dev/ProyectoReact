@@ -67,7 +67,7 @@ const ProductDetailPage = () => {
           <h2 className="fw-bold mb-3">{product.name}</h2>
           <p className="text-muted mb-3">{product.description}</p>
           <h4 className="fw-bold mb-4">{formatCurrency(product.price)}</h4>
-          <button className="btn btn-primary" onClick={() => { addToCart(product); navigate('/cart'); }}>Añadir al carrito</button>
+          <button className="btn btn-dark" onClick={() => { addToCart(product); navigate('/cart'); }}>Añadir al carrito</button>
         </div>
       </div>
     </div>

@@ -560,3 +560,14 @@ html, body {
 .navbar .container-fluid {
   padding: 0 25px !important;
 }
+
+/* ================== GLOBAL FOCUS COLOR ================== */
+/* Unificar color de foco (outline/box-shadow) de los campos al tono de la paleta */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus,
+.btn:focus {
+  border-color: #5c3a29 !important;
+  box-shadow: 0 0 0 0.2rem rgba(92, 58, 41, 0.25) !important;
+  outline: none !important;
+}

@@ -5,7 +5,7 @@
     font-family: 'Roboto', sans-serif;
 }
 
-body {
+.sesion-root {
     height: 100vh;
     display: flex;
     align-items: center;
@@ -22,6 +22,10 @@ body {
     height: 90vh;
     display: flex;
     justify-content: space-around;
+    align-items: center;
+    gap: 2.5rem; /* separación entre el panel de bienvenida y el formulario */
+    max-width: 1200px;
+    margin: 0 auto;
     transition:  all .5s ease-out;
 }
 
@@ -131,7 +135,10 @@ body {
 }
 
 .sign-in {
-    position: absolute;
+    position: absolute; /* se superpone al sign-up cuando está activa */
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     opacity: 0;
     visibility: hidden;
 }
@@ -145,3 +152,61 @@ body {
     opacity: 0;
     visibility: hidden;
 }
+
+/* Wrapper del componente React: ya incluye fondo y centrado */
+.sesion-root {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Asegurar que el contenedor absoluto se posicione por encima cuando está activo */
+.sign-in.active {
+    z-index: 2;
+}
+
+/* Igualar estilos del botón de envío al del HTML original (button) */
+.formulario input[type="submit"] {
+    width: 60%;
+    margin: auto;
+    border: solid thin white;
+    padding: .7rem;
+    border-radius: 2rem;
+    background-color: white;
+    font-weight: 600;
+    margin-top: 3rem;
+    font-size: .8rem;
+    cursor: pointer;
+    color: black;
+}
+
+/* Grupo de proveedores (Google/GitHub) */
+.provider-group {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+}
+.provider-separator {
+    color: #fff;
+    opacity: .9;
+    margin: .25rem 0 .5rem;
+}
+.provider-btn {
+    width: 70%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    border: solid thin white;
+    padding: .6rem .8rem;
+    border-radius: 2rem;
+    background-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out, color .2s ease-in-out;
+}
+.provider-btn:hover {
+    background-color: rgba(255,255,255,.15);
+}
+

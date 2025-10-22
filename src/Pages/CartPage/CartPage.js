@@ -19,7 +19,7 @@ const CartPage = ({ onLogout }) => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold">Carrito</h2>
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary" onClick={() => navigate('/')}>Seguir comprando</button>
+          <button className="btn btn-outline-dark" onClick={() => navigate('/')}>Seguir comprando</button>
           <button className="btn btn-outline-danger" onClick={onLogout}>Cerrar sesión</button>
         </div>
       </div>
@@ -60,7 +60,7 @@ const CartPage = ({ onLogout }) => {
             <h4>Total: {formatCurrency(totalPrice)}</h4>
             <div className="d-flex gap-2">
               <button className="btn btn-outline-danger" onClick={clearCart}>Vaciar carrito</button>
-              <button className="btn btn-primary" onClick={() => navigate('/checkout')}>Pagar</button>
+              <button className="btn btn-dark" onClick={() => navigate('/checkout')}>Pagar</button>
             </div>
           </div>
         </>
