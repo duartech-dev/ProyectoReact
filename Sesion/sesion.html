@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--Los siguientes recursos serán útiles como referencias adicionales para tratar diferentes conceptos relacionados con los
+temas que ha tratado en esta sección. 
+
+Etiquetas meta HTML
+
+Elementos semánticos
+
+Página web HTML sencilla y básica
+
+Plantilla de boletín HTML5/CSS básica
+
+Añadir metadatos sociales de gráficos abiertos - Twitter
+
+Metaetiquetas esenciales para redes sociales
+
+El elemento meta
+
+Protocolo de Open Graph
+
+Uso del protocolo Open Graph en el sitio web
+
+Guía meta OGP para webmasters
+
+Bootstrap con HTML
+
+Ejemplos de diseño de <bootstrap -->
+<head>
+    <meta property="og:title" content="Decocenter">
+    <meta property="og:type " content="sitioWeb">
+    <meta property="og:url" content="https://www.Decocenter.com">
+    <meta property="og:image" content="https://www.Decocenter.com/img/logo.png">
+    <meta property="og:description" content="Decocenter es una empresa dedicada a la producción de modulares para el hogar">
+    <meta property="og:site_name" content="Decocenter">
+    <meta property="og:locale" content="es_ES">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <title>Bienvenido a mi Formulario</title>
+</head>
+
+<body>
+    <div class="container-form sign-up">
+        <div class="welcome-back">
+            <div class="message">
+                <h2>Bienvenido a Decocenter</h2>
+                <p>Si ya tienes una cuenta por favor inicia sesion aqui</p>
+                <button class="sign-up-btn">Iniciar Sesion</button>
+            </div>
+        </div>
+        <form class="formulario">
+            <h2 class="create-account">Crear una cuenta</h2>
+            <div class="iconos">
+                <div class="border-icon">
+                    <i class='bx bxl-instagram'></i>
+                </div>
+                <div class="border-icon">
+                    <i class='bx bxl-linkedin' ></i>
+                </div>
+                <div class="border-icon">
+                    <i class='bx bxl-facebook-circle' ></i>
+                </div>
+            </div>
+            <p class="cuenta-gratis">Crear una cuenta gratis</p>
+            <input type="text" placeholder="Nombre">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Contraseña">
+            <input type="button" value="Registrarse">
+        </form>
+    </div>
+    <div class="container-form sign-in">
+        <form class="formulario">
+            <h2 class="create-account">Iniciar Sesion</h2>
+            <div class="iconos">
+                <div class="border-icon">
+                    <i class='bx bxl-instagram'></i>
+                </div>
+                <div class="border-icon">
+                    <i class='bx bxl-linkedin' ></i>
+                </div>
+                <div class="border-icon">
+                    <i class='bx bxl-facebook-circle' ></i>
+                </div>
+            </div>
+            <p class="cuenta-gratis">¿Aun no tienes una cuenta?</p>
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Contraseña">
+            <input type="button" value="Iniciar Sesion">
+        </form>
+        <div class="welcome-back">
+            <div class="message">
+                <h2>Bienvenido de nuevo</h2>
+                <p>Si aun no tienes una cuenta por favor registrese aqui</p>
+                <button class="sign-in-btn">Registrarse</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="./login.js"></script>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import './HomePage.css';
@@ -16,18 +16,28 @@ const carouselImages = [
   '/assets/puerta.jpg',
 ];
 
-// Lista de categorías
-const categories = ['Todos', ...Array.from(new Set(products.map((p) => p.category)))];
+// Lista de categorías calculadas a partir de productos combinados
 
 function HomePage({ userEmail, onLogout }) {
   const navigate = useNavigate();
   const { addToCart, totalItems } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
+  const allProducts = useMemo(() => {
+    try {
+      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
+      return [...products, ...extra];
+    } catch {
+      return products;
+    }
+  }, []);
+
+  const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
+
   const filteredProducts =
     selectedCategory === 'Todos'
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
+      ? allProducts
+      : allProducts.filter((p) => p.category === selectedCategory);
 
   const formatCurrency = (value) =>
     value.toLocaleString('es-MX', {

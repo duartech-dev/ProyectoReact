@@ -27,13 +27,15 @@ const LoginPage = ({ onLoginSuccess, switchToRegister }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const { user } = result;
+      const role = user.email === 'admin@example.com' ? 'admin' : 'user';
+      const userObj = { email: user.email, role, name: user.displayName };
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
         text: `Hola ${user.displayName || user.email}`,
         timer: 1500,
         showConfirmButton: false,
-      }).then(() => onLoginSuccess(user.email));
+      }).then(() => onLoginSuccess(userObj));
     } catch (error) {
       Swal.fire({ icon: 'error', title: 'Error', text: error.message });
     }
@@ -43,13 +45,15 @@ const LoginPage = ({ onLoginSuccess, switchToRegister }) => {
     try {
       const result = await signInWithPopup(auth, githubProvider);
       const { user } = result;
+      const role = user.email === 'admin@example.com' ? 'admin' : 'user';
+      const userObj = { email: user.email, role, name: user.displayName };
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
         text: `Hola ${user.displayName || user.email}`,
         timer: 1500,
         showConfirmButton: false,
-      }).then(() => onLoginSuccess(user.email));
+      }).then(() => onLoginSuccess(userObj));
     } catch (error) {
       Swal.fire({ icon: 'error', title: 'Error', text: error.message });
     }
@@ -65,25 +69,28 @@ const LoginPage = ({ onLoginSuccess, switchToRegister }) => {
     const matchedUser = storedUsers.find((u) => u.email === form.email && u.password === form.password);
 
     if (matchedUser) {
+      const role = matchedUser.role || (matchedUser.email === 'admin@example.com' ? 'admin' : 'user');
+      const userObj = { email: matchedUser.email, role, name: matchedUser.name };
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
         text: `Hola ${matchedUser.name || matchedUser.email}`,
         timer: 1500,
         showConfirmButton: false,
-      }).then(() => onLoginSuccess(matchedUser.email));
+      }).then(() => onLoginSuccess(userObj));
       return;
     }
 
     // Credenciales de demostración
     if (form.email === 'admin@example.com' && form.password === 'password123') {
+      const userObj = { email: form.email, role: 'admin' };
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
         text: 'Has iniciado sesión correctamente',
         timer: 1500,
         showConfirmButton: false,
-      }).then(() => onLoginSuccess(form.email));
+      }).then(() => onLoginSuccess(userObj));
     } else {
       Swal.fire({
         icon: 'error',
@@ -96,7 +103,14 @@ const LoginPage = ({ onLoginSuccess, switchToRegister }) => {
   return (
     <div className="login-page d-flex align-items-center justify-content-center">
       <div className="card shadow-lg p-4 login-card">
-        <h3 className="text-center mb-4">Iniciar Sesión</h3>
+        <h3 className="text-center mb-2">Iniciar Sesión</h3>
+        {form.email && (
+          <div className="text-center mb-3">
+            <span className={`badge ${form.email.trim().toLowerCase() === 'admin@example.com' ? 'bg-dark' : 'bg-secondary'}`}>
+              {form.email.trim().toLowerCase() === 'admin@example.com' ? 'Administrador' : 'Usuario'}
+            </span>
+          </div>
+        )}
         <form onSubmit={handleSubmit} noValidate>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo electrónico</label>

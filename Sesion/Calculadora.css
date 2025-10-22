@@ -1,0 +1,25 @@
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.todo{
+
+display: flex;
+flex-direction: row;
+justify-content:left;
+width: 70%;
+height: 70%;
+}
+
+.inputs{
+    display: flex;
+flex-direction: column;
+padding: 1rem;
+margin: 0;
+}
+input{
+    padding: 1rem;
+    margin: 1rem 1rem 1rem 0 ;
+}

@@ -1,20 +1,29 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import products from '../../data/products';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const categories = ['Todos', ...Array.from(new Set(products.map((p) => p.category)))];
-
-const StorePage = ({ userEmail, onLogout }) => {
+const StorePage = ({ userEmail, userRole, onLogout }) => {
   const navigate = useNavigate();
   const { addToCart, totalItems } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
+  const allProducts = useMemo(() => {
+    try {
+      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
+      return [...products, ...extra];
+    } catch {
+      return products;
+    }
+  }, []);
+
+  const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
+
   const filteredProducts =
     selectedCategory === 'Todos'
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
+      ? allProducts
+      : allProducts.filter((p) => p.category === selectedCategory);
 
   const formatCurrency = (value) =>
     value.toLocaleString('es-MX', {
@@ -38,6 +47,9 @@ const StorePage = ({ userEmail, onLogout }) => {
               <li className="nav-item"><span className="nav-link active" style={{ cursor: 'pointer' }}>Tienda</span></li>
               <li className="nav-item"><span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => navigate('/contact')}>Contáctenos</span></li>
               <li className="nav-item"><span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => navigate('/promotions')}>Promociones</span></li>
+              {userRole === 'admin' && (
+                <li className="nav-item"><span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin')}>Agregar productos</span></li>
+              )}
             </ul>
             <button className="btn position-relative me-3" onClick={() => navigate('/cart')}>
               <i className="bi bi-cart3 fs-5"></i>

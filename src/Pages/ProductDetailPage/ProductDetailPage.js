@@ -1,13 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { useParams, useNavigate } from 'react-router-dom';
-import products from '../../data/products';
+import baseProducts from '../../data/products';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = products.find((p) => p.id.toString() === id);
+
+  const allProducts = useMemo(() => {
+    try {
+      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
+      return [...baseProducts, ...extra];
+    } catch {
+      return baseProducts;
+    }
+  }, []);
+
+  const product = allProducts.find((p) => p.id.toString() === id);
   const { addToCart } = useContext(CartContext);
   const [selectedImage, setSelectedImage] = useState(product ? product.image : '');
 

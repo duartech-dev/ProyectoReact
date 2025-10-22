@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './App.css';
 import LoginPage from './Pages/LoginPage/LoginPage';
 import RegisterPage from './Pages/RegisterPage/RegisterPage';
+import AdminPage from './Pages/Admin/AdminPage';
+import AdminProtectedRoute from './Pages/Admin/AdminProtectedRoute';
 import HomePage from './Pages/HomePage/HomePage';
 import ProductDetailPage from './Pages/ProductDetailPage/ProductDetailPage';
 import CartPage from './Pages/CartPage/CartPage';
@@ -16,41 +18,45 @@ import Navbar from './components/Navbar';
 
 function App() {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState(null);
+  const [user, setUser] = useState(null);
   const [authView, setAuthView] = useState('login');
 
-  // Debug: verificar estado inicial
-  console.log('App state:', { userEmail, authView });
+  console.log('App state:', { user, authView });
 
-  const handleLoginSuccess = (email) => {
-    console.log('Login success with email:', email);
-    setUserEmail(email);
+  const handleLoginSuccess = (userObj) => {
+    console.log('Login success with user:', userObj);
+    setUser(userObj);
     navigate('/');
   };
 
   const handleLogout = () => {
     setAuthView('login');
-    setUserEmail(null);
+    setUser(null);
   };
 
   return (
     <div className="App">
-      {userEmail ? (
+      {user ? (
         <>
-          <Navbar userEmail={userEmail} onLogout={handleLogout} />
+          <Navbar user={user} onLogout={handleLogout} />
           <div style={{ marginTop: '80px' }}>
             <Routes>
-              <Route path="/" element={<HomePage userEmail={userEmail} onLogout={handleLogout} />} />
+              <Route path="/" element={<HomePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage onLogout={handleLogout} />} />
-              <Route path="/checkout" element={<CheckoutPage userEmail={userEmail} />} />
-              <Route path="/store" element={<StorePage userEmail={userEmail} onLogout={handleLogout} />} />
+              <Route path="/checkout" element={<CheckoutPage userEmail={user?.email} />} />
+              <Route path="/store" element={<StorePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
               <Route path="/promotions" element={<PromotionsPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/proyectos/*" element={
-                <ProjectsProtectedRoute userEmail={userEmail}>
+                <ProjectsProtectedRoute userEmail={user?.email}>
                   <ProjectsPage />
                 </ProjectsProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <AdminProtectedRoute user={user}>
+                  <AdminPage />
+                </AdminProtectedRoute>
               } />
             </Routes>
           </div>
