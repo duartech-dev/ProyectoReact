@@ -15,6 +15,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     color: #fff;
+    padding: 0 16px;
 }
 
 .container-form {
@@ -65,13 +66,13 @@
 .formulario {
     width: 400px;
     padding: 1rem;
-    margin: 2rem;
+    margin: 1rem auto;
     background-color: rgb(148, 110, 82, 0.6);
     text-align: center;
 }
 
 .create-account {
-    padding: 2.7rem 0;
+    padding: 2rem 0;
     font-size: 1.7rem;
 }
 
@@ -106,10 +107,10 @@
 }
 
 .formulario input {
-    width: 70%;
+    width: 80%;
     display: block;
     margin: auto;
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     background-color: transparent;
     border: none;
     border-bottom: white thin solid;
@@ -210,3 +211,77 @@
     background-color: rgba(255,255,255,.15);
 }
 
+/* Fila de acciones (Iniciar Sesion + Registrarse lado a lado) */
+.actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    margin-top: .5rem;
+}
+.actions-row input[type="submit"],
+.actions-row .outline-light-btn {
+    width: 48%;
+}
+.outline-light-btn {
+    padding: .7rem;
+    border-radius: 2rem;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out, color .2s ease-in-out;
+    display: none; /* oculto por defecto en pantallas grandes */
+}
+.outline-light-btn:hover {
+    background-color: rgba(255,255,255,.15);
+}
+@media (max-width: 768px) {
+  .container-form {
+    height: auto;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+  .welcome-back {
+    display: none;
+  }
+  .formulario {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 1rem 1rem;
+  }
+  .create-account { padding: 1rem 0; }
+  .cuenta-gratis { padding: .5rem 0; }
+  .formulario input {
+    width: 100%;
+  }
+  .formulario input[type="submit"] {
+    width: 100%;
+  }
+  .actions-row {
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .actions-row input[type="submit"],
+  .actions-row .outline-light-btn {
+    width: 100%;
+  }
+  .provider-group .provider-btn {
+    width: 100%;
+  }
+  .sign-in,
+  .sign-up {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+  }
+  .sign-in { display: none; }
+  .sign-in.active { display: block; }
+  .sign-up.active { display: none; }
+  .outline-light-btn { display: block; } /* mostrar botón Registrarse en móvil/tablet */
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .outline-light-btn { display: block; }
+}

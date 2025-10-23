@@ -34,6 +34,11 @@ function App() {
     setUser(null);
   };
 
+  const handleRequireAuth = () => {
+    // Forzar pantalla de autenticación
+    setUser(null);
+  };
+
   return (
     <div className="App">
       {user ? (
@@ -43,7 +48,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage onLogout={handleLogout} />} />
+              <Route path="/cart" element={<CartPage onLogout={handleLogout} isGuest={user?.role === 'guest'} onRequireAuth={handleRequireAuth} />} />
               <Route path="/checkout" element={<CheckoutPage userEmail={user?.email} />} />
               <Route path="/store" element={<StorePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
               <Route path="/promotions" element={<PromotionsPage />} />

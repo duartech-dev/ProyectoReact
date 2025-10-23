@@ -6,7 +6,7 @@ import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, githubProvider } from '../../firebase';
 
 const SesionPage = ({ onLoginSuccess }) => {
-  const [view, setView] = useState('register'); // 'login' | 'register'
+  const [view, setView] = useState('login'); // 'login' | 'register'
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
 
@@ -16,6 +16,17 @@ const SesionPage = ({ onLoginSuccess }) => {
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
     setLoginForm((f) => ({ ...f, [name]: value }));
+  };
+
+  const handleGuestAccess = () => {
+    const userObj = { email: 'invitado', role: 'guest', name: 'Invitado' };
+    Swal.fire({
+      icon: 'info',
+      title: 'Modo invitado',
+      text: 'Has ingresado como invitado. Para comprar deberás iniciar sesión.',
+      timer: 1500,
+      showConfirmButton: false,
+    }).then(() => onLoginSuccess && onLoginSuccess(userObj));
   };
 
   const handleRegisterChange = (e) => {
@@ -211,8 +222,12 @@ const SesionPage = ({ onLoginSuccess }) => {
           <p className="cuenta-gratis">¿Aun no tienes una cuenta?</p>
           <input type="email" placeholder="Email" name="email" value={loginForm.email} onChange={handleLoginChange} />
           <input type="password" placeholder="Contraseña" name="password" value={loginForm.password} onChange={handleLoginChange} />
-          <input type="submit" value="Iniciar Sesion" />
+          <div className="actions-row">
+            <input type="submit" value="Iniciar Sesion" />
+            <button type="button" className="outline-light-btn" onClick={toggleToRegister}>Registrarse</button>
+          </div>
           <div className="provider-group">
+            <button type="button" className="provider-btn" onClick={handleGuestAccess}>Entrar como Invitado</button>
             <button type="button" className="provider-btn admin-btn" onClick={handleAdminDemo}>Entrar como Administrador</button>
             <div className="provider-separator">o</div>
             <button type="button" className="provider-btn google-btn" onClick={handleGoogleLogin}>
