@@ -32,7 +32,7 @@ const ContactPage = () => {
 
   return (
     <div className="container py-5">
-      <button className="btn btn-link mb-4" onClick={() => navigate(-1)}>&larr; Volver</button>
+      <button className="btn btn-outline-dark mb-4" onClick={() => navigate(-1)}>&larr; Volver</button>
       <h2 className="fw-bold mb-4 text-center">Contáctenos</h2>
 
       {submitted && (

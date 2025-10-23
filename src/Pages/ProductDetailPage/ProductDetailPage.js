@@ -25,7 +25,7 @@ const ProductDetailPage = () => {
     return (
       <div className="container py-5">
         <h3>Producto no encontrado</h3>
-        <button className="btn btn-link" onClick={() => navigate(-1)}>Volver</button>
+        <button className="btn btn-outline-dark" onClick={() => navigate(-1)}>Volver</button>
       </div>
     );
   }
@@ -39,7 +39,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="container py-5">
-      <button className="btn btn-link mb-4" onClick={() => navigate(-1)}>
+      <button className="btn btn-outline-dark mb-4" onClick={() => navigate(-1)}>
         &larr; Volver
       </button>
       <div className="row g-4">
