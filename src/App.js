@@ -31,6 +31,11 @@ function App() {
   };
 
   const handleLogout = () => {
+    // Notificar a quien gestione el carrito que debe vaciarse
+    try {
+      window.dispatchEvent(new Event('app-logout'));
+      localStorage.removeItem('cart');
+    } catch (_) {}
     setUser(null);
   };
 
@@ -43,7 +48,7 @@ function App() {
     <div className="App">
       {user ? (
         <>
-          <Navbar user={user} onLogout={handleLogout} />
+          <Navbar user={user} onLogout={handleLogout} onRequireAuth={handleRequireAuth} />
           <div style={{ marginTop: '80px' }}>
             <Routes>
               <Route path="/" element={<HomePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />

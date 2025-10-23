@@ -15,7 +15,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     color: #fff;
-    padding: 0 16px;
+    padding: 0 30px 0 0;
 }
 
 .container-form {
@@ -69,6 +69,7 @@
     margin: 1rem auto;
     background-color: rgb(148, 110, 82, 0.6);
     text-align: center;
+    border-radius: 10px;
 }
 
 .create-account {
@@ -120,6 +121,12 @@
     font-size: .9rem;
     color: white;
 }
+
+/* Placeholders en blanco */
+.formulario input::placeholder { color: rgba(255,255,255,0.9); }
+.formulario input::-webkit-input-placeholder { color: rgba(255,255,255,0.9); }
+.formulario input:-ms-input-placeholder { color: rgba(255,255,255,0.9); }
+.formulario input::-ms-input-placeholder { color: rgba(255,255,255,0.9); }
 
 .formulario input[type="button"] {
     width: 60%;

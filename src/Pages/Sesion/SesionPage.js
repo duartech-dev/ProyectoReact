@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './style.css';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '../../firebase';
+import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, googleProvider, db } from '../../firebase';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 const SesionPage = ({ onLoginSuccess }) => {
   const [view, setView] = useState('login'); // 'login' | 'register'
@@ -146,27 +147,29 @@ const SesionPage = ({ onLoginSuccess }) => {
       return;
     }
 
-    try {
-      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const exists = storedUsers.some((u) => u.email === email);
-      if (exists) {
-        Swal.fire({ icon: 'error', title: 'Ya registrado', text: 'El correo ya está registrado' });
-        return;
+    (async () => {
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = cred.user;
+        await updateProfile(user, { displayName: name.trim() });
+        await setDoc(doc(db, 'users', user.uid), {
+          name: name.trim(),
+          email: user.email,
+          role: 'user',
+          createdAt: serverTimestamp(),
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Registro exitoso',
+          text: 'Ahora puedes iniciar sesión',
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => setView('login'));
+      } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Error de registro', text: error.message || 'Ocurrió un error' });
       }
-
-      storedUsers.push({ name: name.trim(), email, password });
-      localStorage.setItem('users', JSON.stringify(storedUsers));
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Registro exitoso',
-        text: 'Ahora puedes iniciar sesión',
-        timer: 1500,
-        showConfirmButton: false,
-      }).then(() => setView('login'));
-    } catch (error) {
-      Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Ocurrió un error' });
-    }
+    })();
   };
 
   // Mantener las mismas clases para conservar el diseño original

@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { CartContext } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const CartPage = ({ onLogout }) => {
+const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
   const { cartItems, removeFromCart, clearCart, totalPrice } = useContext(CartContext);
   const navigate = useNavigate();
 
@@ -60,7 +62,30 @@ const CartPage = ({ onLogout }) => {
             <h4>Total: {formatCurrency(totalPrice)}</h4>
             <div className="d-flex gap-2">
               <button className="btn btn-outline-danger" onClick={clearCart}>Vaciar carrito</button>
-              <button className="btn btn-dark" onClick={() => navigate('/checkout')}>Pagar</button>
+              <button
+                className="btn btn-dark"
+                onClick={() => {
+                  if (isGuest) {
+                    Swal.fire({
+                      icon: 'question',
+                      title: '¿Cómo deseas continuar?',
+                      text: 'Para pagar necesitas iniciar sesión. ¿Quieres ir a iniciar sesión ahora? ',
+                      showCancelButton: true,
+                      confirmButtonText: 'Iniciar sesión',
+                      cancelButtonText: 'Seguir como invitado',
+                      allowOutsideClick: false,
+                    }).then((res) => {
+                      if (res.isConfirmed) {
+                        if (onRequireAuth) onRequireAuth();
+                      }
+                    });
+                    return; 
+                  }
+                  navigate('/checkout');
+                }}
+              >
+                Pagar
+              </button>
             </div>
           </div>
         </>

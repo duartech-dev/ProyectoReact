@@ -20,6 +20,16 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Vaciar carrito al cerrar sesión (evento emitido desde App)
+  useEffect(() => {
+    const onLogout = () => {
+      setCartItems([]);
+      try { localStorage.removeItem('cart'); } catch (_) {}
+    };
+    window.addEventListener('app-logout', onLogout);
+    return () => window.removeEventListener('app-logout', onLogout);
+  }, []);
+
   const addToCart = (product) => {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === product.id);

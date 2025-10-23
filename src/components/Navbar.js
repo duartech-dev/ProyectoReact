@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
-export default function Navbar({ user, onLogout }) {
+export default function Navbar({ user, onLogout, onRequireAuth }) {
   const navigate = useNavigate();
   const { totalItems } = useContext(CartContext);
 
@@ -30,7 +30,13 @@ export default function Navbar({ user, onLogout }) {
             )}
           </button>
           <span className="me-3 text-muted d-none d-lg-block">{user?.email}</span>
-          <button className="btn btn-outline-secondary" onClick={onLogout}>Cerrar sesión</button>
+          {user?.role === 'guest' ? (
+            <button className="btn btn-outline-secondary" onClick={() => onRequireAuth && onRequireAuth()}>
+              Iniciar sesión
+            </button>
+          ) : (
+            <button className="btn btn-outline-secondary" onClick={onLogout}>Cerrar sesión</button>
+          )}
         </div>
       </div>
     </nav>

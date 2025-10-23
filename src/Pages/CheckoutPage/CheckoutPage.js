@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { saveOrder } from '../../services/orderService';
 import { CartContext } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +26,18 @@ const CheckoutPage = ({ userEmail }) => {
       navigate('/');
     }
   }, [cartItems.length, navigate]);
+
+  // Exigir usuario logueado
+  useEffect(() => {
+    if (!userEmail) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Inicia sesión',
+        text: 'Debes iniciar sesión para realizar el pago.',
+        confirmButtonText: 'Ir al inicio'
+      }).then(() => navigate('/'));
+    }
+  }, [userEmail, navigate]);
 
   // Cargar el SDK de PayPal y renderizar los botones
   useEffect(() => {
