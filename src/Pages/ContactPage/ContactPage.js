@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/forms.css';
 
 const ContactPage = () => {
   const navigate = useNavigate();
@@ -13,9 +14,8 @@ const ContactPage = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validaciones mínimas
     const nextErrors = {};
     if (!form.name.trim()) nextErrors.name = 'Tu nombre es requerido';
     if (!form.email.trim()) nextErrors.email = 'El correo es requerido';
@@ -24,8 +24,7 @@ const ContactPage = () => {
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
-
-    // Aquí podrías enviar la información a un backend o servicio
+    // Comportamiento anterior: simular envío y mostrar banner de éxito
     setSubmitted(true);
     setForm({ name: '', email: '', message: '' });
   };
@@ -49,7 +48,7 @@ const ContactPage = () => {
                 <label htmlFor="name" className="form-label">Nombre</label>
                 <input
                   type="text"
-                  className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                  className={`form-control dc-input ${errors.name ? 'is-invalid' : ''}`}
                   id="name"
                   name="name"
                   value={form.name}
@@ -65,7 +64,7 @@ const ContactPage = () => {
                 <label htmlFor="email" className="form-label">Correo electrónico</label>
                 <input
                   type="email"
-                  className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                  className={`form-control dc-input ${errors.email ? 'is-invalid' : ''}`}
                   id="email"
                   name="email"
                   value={form.email}
@@ -80,7 +79,7 @@ const ContactPage = () => {
               <div className="col-12">
                 <label htmlFor="message" className="form-label">Mensaje</label>
                 <textarea
-                  className={`form-control ${errors.message ? 'is-invalid' : ''}`}
+                  className={`form-control dc-input ${errors.message ? 'is-invalid' : ''}`}
                   id="message"
                   rows="5"
                   name="message"

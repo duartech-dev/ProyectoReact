@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import './Pages/HomePage/HomePage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,10 +13,18 @@ import StorePage from './Pages/StorePage/StorePage';
 import PromotionsPage from './Pages/PromotionsPage/PromotionsPage';
 import ContactPage from './Pages/ContactPage/ContactPage';
 import CheckoutPage from './Pages/CheckoutPage/CheckoutPage';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ProjectsPage from './Pages/ProjectsPage/ProjectsPage';
 import ProjectsProtectedRoute from './Pages/ProjectsPage/ProjectsProtectedRoute';
 import Navbar from './components/Navbar';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
+  return null;
+}
 
 function App() {
   const navigate = useNavigate();
@@ -46,6 +54,7 @@ function App() {
 
   return (
     <div className="App">
+      <ScrollToTop />
       {user ? (
         <>
           <Navbar user={user} onLogout={handleLogout} onRequireAuth={handleRequireAuth} />
@@ -56,7 +65,7 @@ function App() {
               <Route path="/cart" element={<CartPage onLogout={handleLogout} isGuest={user?.role === 'guest'} onRequireAuth={handleRequireAuth} />} />
               <Route path="/checkout" element={<CheckoutPage userEmail={user?.email} />} />
               <Route path="/store" element={<StorePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
-              <Route path="/promotions" element={<PromotionsPage />} />
+              <Route path="/promotions" element={<PromotionsPage userRole={user?.role} />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/proyectos/*" element={
                 <ProjectsProtectedRoute userEmail={user?.email}>
@@ -65,7 +74,7 @@ function App() {
               } />
               <Route path="/admin" element={
                 <AdminProtectedRoute user={user}>
-                  <AdminPage />
+                  <AdminPage userRole={user?.role} />
                 </AdminProtectedRoute>
               } />
             </Routes>

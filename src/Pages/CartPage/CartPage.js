@@ -22,7 +22,6 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
         <h2 className="fw-bold">Carrito</h2>
         <div className="d-flex gap-2">
           <button className="btn btn-outline-dark" onClick={() => navigate('/')}>Seguir comprando</button>
-          <button className="btn btn-outline-danger" onClick={onLogout}>Cerrar sesión</button>
         </div>
       </div>
       {cartItems.length === 0 ? (

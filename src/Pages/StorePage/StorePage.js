@@ -1,22 +1,22 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
-import products from '../../data/products';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { listenAllProducts } from '../../services/productsService';
+import products from '../../data/products';
 
 const StorePage = ({ userEmail, userRole, onLogout }) => {
   const navigate = useNavigate();
   const { addToCart, totalItems } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [remoteProducts, setRemoteProducts] = useState([]);
 
-  const allProducts = useMemo(() => {
-    try {
-      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
-      return [...products, ...extra];
-    } catch {
-      return products;
-    }
+  useEffect(() => {
+    const unsub = listenAllProducts(setRemoteProducts);
+    return () => unsub && unsub();
   }, []);
+
+  const allProducts = useMemo(() => [...products, ...remoteProducts], [remoteProducts]);
 
   const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
 
@@ -26,10 +26,10 @@ const StorePage = ({ userEmail, userRole, onLogout }) => {
       : allProducts.filter((p) => p.category === selectedCategory);
 
   const formatCurrency = (value) =>
-    value.toLocaleString('es-MX', {
+    Number(value || 0).toLocaleString('es-CO', {
       style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 2,
+      currency: 'COP',
+      minimumFractionDigits: 0,
     });
 
   return (

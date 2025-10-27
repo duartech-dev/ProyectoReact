@@ -1,25 +1,48 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import baseProducts from '../../data/products';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const allProducts = useMemo(() => {
-    try {
-      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
-      return [...baseProducts, ...extra];
-    } catch {
-      return baseProducts;
-    }
-  }, []);
-
-  const product = allProducts.find((p) => p.id.toString() === id);
+  const allProducts = useMemo(() => baseProducts, []);
+  const [product, setProduct] = useState(() => allProducts.find((p) => p.id.toString() === id) || null);
   const { addToCart } = useContext(CartContext);
   const [selectedImage, setSelectedImage] = useState(product ? product.image : '');
+
+  useEffect(() => {
+    let ignore = false;
+    const local = allProducts.find((p) => p.id.toString() === id);
+    if (local) {
+      setProduct(local);
+      setSelectedImage(local.image);
+      return;
+    }
+    (async () => {
+      try {
+        const ref = doc(db, 'products', id);
+        const snap = await getDoc(ref);
+        if (!ignore) {
+          if (snap.exists()) {
+            const data = { id: snap.id, ...snap.data() };
+            setProduct(data);
+            setSelectedImage(data.image || '');
+          } else {
+            setProduct(null);
+          }
+        }
+      } catch (e) {
+        console.error('Error cargando producto:', e);
+        if (!ignore) setProduct(null);
+      }
+    })();
+    return () => { ignore = true; };
+  }, [id, allProducts]);
 
   if (!product) {
     return (
@@ -31,10 +54,10 @@ const ProductDetailPage = () => {
   }
 
   const formatCurrency = (value) =>
-    value.toLocaleString('es-MX', {
+    Number(value || 0).toLocaleString('es-CO', {
       style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 2,
+      currency: 'COP',
+      minimumFractionDigits: 0,
     });
 
   return (
@@ -45,7 +68,7 @@ const ProductDetailPage = () => {
       <div className="row g-4">
         <div className="col-md-6 order-2 order-md-1">
           <div className="d-flex gap-2 mb-3 overflow-auto">
-            {[product.image, product.image, product.image].map((img, idx) => (
+            {[product.image, product.image, product.image].filter(Boolean).map((img, idx) => (
               <img
                 key={idx}
                 src={img}
@@ -61,7 +84,9 @@ const ProductDetailPage = () => {
               />
             ))}
           </div>
-          <img src={selectedImage} className="img-fluid rounded shadow-sm" alt={product.name} />
+          {selectedImage && (
+            <img src={selectedImage} className="img-fluid rounded shadow-sm" alt={product.name} />
+          )}
         </div>
         <div className="col-md-6">
           <h2 className="fw-bold mb-3">{product.name}</h2>

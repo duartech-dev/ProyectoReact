@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import './HomePage.css';
@@ -7,6 +7,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProjectsMenu from '../ProjectsPage/ProjectsMenu';
 import Products from './Products';
+import { listenAllProducts } from '../../services/productsService';
 import products from '../../data/products';
 
 // Imágenes para el carrusel y productos desde public/assets
@@ -22,15 +23,23 @@ function HomePage({ userEmail, onLogout }) {
   const navigate = useNavigate();
   const { addToCart, totalItems } = useContext(CartContext);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [remoteProducts, setRemoteProducts] = useState([]);
 
-  const allProducts = useMemo(() => {
-    try {
-      const extra = JSON.parse(localStorage.getItem('admin_products') || '[]');
-      return [...products, ...extra];
-    } catch {
-      return products;
+  const goHome = () => {
+    if (window.location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
     }
+  };
+
+  useEffect(() => {
+    const unsub = listenAllProducts(setRemoteProducts);
+    return () => unsub && unsub();
   }, []);
+
+  const allProducts = useMemo(() => [...products, ...remoteProducts], [remoteProducts]);
 
   const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
 
@@ -40,10 +49,10 @@ function HomePage({ userEmail, onLogout }) {
       : allProducts.filter((p) => p.category === selectedCategory);
 
   const formatCurrency = (value) =>
-    value.toLocaleString('es-MX', {
+    Number(value || 0).toLocaleString('es-CO', {
       style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 2,
+      currency: 'COP',
+      minimumFractionDigits: 0,
     });
 
   return (
@@ -137,10 +146,8 @@ function HomePage({ userEmail, onLogout }) {
             <div className="col-md-4">
               <h3 className="footer-title">DECOCENTER</h3>
               <ul className="footer-nav">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/contact">Contactenos</a></li>
-                <li><a href="#">Politicas de Privacidad</a></li>
-                <li><a href="#">Foro</a></li>
+                <li><button className="btn btn-link p-0 text-white text-decoration-none" onClick={goHome}>Inicio</button></li>
+                <li><button className="btn btn-link p-0 text-white text-decoration-none" onClick={() => navigate('/contact')}>Contactenos</button></li>
               </ul>
             </div>
             
@@ -164,14 +171,14 @@ function HomePage({ userEmail, onLogout }) {
             {/* Columna derecha - Redes sociales y copyright */}
             <div className="col-md-4">
               <div className="social-media">
-                <a href="#" className="social-link">
+                <a href="https://www.facebook.com/share/17FieXGpyz/?mibextid=qi2Omg" className="social-link" target="_blank" rel="noopener noreferrer">
                   <img src="/assets/Facebook.svg" alt="Facebook" className="social-icon" />
                 </a>
-                <a href="#" className="social-link">
+                <a href="https://www.instagram.com/decocenterocana" className="social-link" target="_blank" rel="noopener noreferrer">
                   <img src="/assets/Instagram.svg" alt="Instagram" className="social-icon" />
                 </a>
-                <a href="#" className="social-link">
-                  <img src="/assets/twitter.svg" alt="Twitter" className="social-icon" />
+                <a href="https://wa.me/573186657064?text=Hola%20Decocenter%2C%20quiero%20informaci%C3%B3n" className="social-link" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                  <i className="bi bi-whatsapp" style={{ fontSize: '28px', color: 'white' }}></i>
                 </a>
               </div>
               <div className="copyright">

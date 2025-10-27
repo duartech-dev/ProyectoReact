@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './style.css';
-import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithPopup, createUserWithEmailAndPassword, updateProfile, fetchSignInMethodsForEmail, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider, db } from '../../firebase';
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
+const ADMIN_EMAIL = 'duartech1598@gmail.com';
+
 const SesionPage = ({ onLoginSuccess }) => {
+
   const [view, setView] = useState('login'); // 'login' | 'register'
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
@@ -37,40 +41,15 @@ const SesionPage = ({ onLoginSuccess }) => {
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
-  const handleAdminDemo = async () => {
-    const { value: pwd } = await Swal.fire({
-      title: 'Contraseña de administrador',
-      input: 'password',
-      inputLabel: 'Ingresa la contraseña',
-      inputPlaceholder: '********',
-      inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
-      showCancelButton: true,
-      confirmButtonText: 'Entrar',
-      cancelButtonText: 'Cancelar',
-    });
-
-    if (pwd === undefined) return; // cancelado
-    if (pwd !== 'password123') {
-      Swal.fire({ icon: 'error', title: 'Contraseña incorrecta', text: 'Inténtalo de nuevo.' });
-      return;
-    }
-
-    const userObj = { email: 'admin@example.com', role: 'admin', name: 'Administrador' };
-    Swal.fire({
-      icon: 'success',
-      title: 'Bienvenido',
-      text: 'Has iniciado sesión como Administrador',
-      timer: 1200,
-      showConfirmButton: false,
-    }).then(() => onLoginSuccess && onLoginSuccess(userObj));
-  };
+  // Admin por correo: no hay botón específico; se detecta por email al iniciar sesión
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const { user } = result;
-      const role = user.email === 'admin@example.com' ? 'admin' : 'user';
+      const role = user.email === ADMIN_EMAIL ? 'admin' : 'user';
       const userObj = { email: user.email, role, name: user.displayName };
+
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
@@ -83,7 +62,50 @@ const SesionPage = ({ onLoginSuccess }) => {
     }
   };
 
-  
+  const handleForgotPassword = async () => {
+    try {
+      let email = (loginForm.email || '').trim().toLowerCase();
+      if (!validateEmail(email)) {
+        const { value } = await Swal.fire({
+          title: 'Restablecer contraseña',
+          input: 'email',
+          inputLabel: 'Ingresa tu correo',
+          inputPlaceholder: 'tu@correo.com',
+          showCancelButton: true,
+          confirmButtonText: 'Enviar',
+          cancelButtonText: 'Cancelar',
+        });
+        if (!value) return;
+        email = String(value || '').trim().toLowerCase();
+      }
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      if (!methods || methods.length === 0) {
+        Swal.fire({ icon: 'error', title: 'Usuario no encontrado', text: 'No existe una cuenta con ese correo.' });
+        return;
+      }
+      if (methods.includes('password')) {
+        await sendPasswordResetEmail(auth, email);
+        Swal.fire({ icon: 'success', title: 'Correo enviado', text: 'Revisa tu bandeja (y spam) para restablecer la contraseña.' });
+        return;
+      }
+      if (methods.includes('google.com')) {
+        Swal.fire({ icon: 'info', title: 'Inicia con Google', text: 'Ese correo usa Google para iniciar sesión. Entra con el botón de Google.' });
+        return;
+      }
+      Swal.fire({ icon: 'info', title: 'Método no soportado', text: 'La cuenta usa un proveedor diferente. Inicia con el mismo proveedor.' });
+    } catch (error) {
+      let msg = 'No se pudo enviar el correo';
+      switch (error.code) {
+        case 'auth/user-not-found':
+          msg = 'No existe una cuenta con ese correo.'; break;
+        case 'auth/invalid-email':
+          msg = 'Correo no válido.'; break;
+        default:
+          msg = error.message || msg;
+      }
+      Swal.fire({ icon: 'error', title: 'Error', text: msg });
+    }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -96,38 +118,33 @@ const SesionPage = ({ onLoginSuccess }) => {
       return;
     }
 
-    try {
-      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const matchedUser = storedUsers.find((u) => u.email === loginForm.email && u.password === loginForm.password);
-
-      if (matchedUser) {
-        const role = matchedUser.role || (matchedUser.email === 'admin@example.com' ? 'admin' : 'user');
-        const userObj = { email: matchedUser.email, role, name: matchedUser.name };
+    (async () => {
+      try {
+        const cred = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
+        const role = cred.user.email === ADMIN_EMAIL ? 'admin' : 'user';
+        const userObj = { email: cred.user.email, role, name: cred.user.displayName };
         Swal.fire({
           icon: 'success',
           title: 'Bienvenido',
-          text: `Hola ${matchedUser.name || matchedUser.email}`,
+          text: `Hola ${cred.user.displayName || cred.user.email}`,
           timer: 1500,
           showConfirmButton: false,
         }).then(() => onLoginSuccess && onLoginSuccess(userObj));
-        return;
+      } catch (error) {
+        let msg = 'Ocurrió un error';
+        switch (error.code) {
+          case 'auth/invalid-credential':
+          case 'auth/wrong-password':
+          case 'auth/user-not-found':
+            msg = 'El correo o la contraseña son incorrectos'; break;
+          case 'auth/too-many-requests':
+            msg = 'Demasiados intentos. Inténtalo más tarde o restablece tu contraseña.'; break;
+          default:
+            msg = error.message || msg;
+        }
+        Swal.fire({ icon: 'error', title: 'Error de inicio de sesión', text: msg });
       }
-
-      if (loginForm.email === 'admin@example.com' && loginForm.password === 'password123') {
-        const userObj = { email: loginForm.email, role: 'admin' };
-        Swal.fire({
-          icon: 'success',
-          title: 'Bienvenido',
-          text: 'Has iniciado sesión correctamente',
-          timer: 1500,
-          showConfirmButton: false,
-        }).then(() => onLoginSuccess && onLoginSuccess(userObj));
-      } else {
-        Swal.fire({ icon: 'error', title: 'Credenciales inválidas', text: 'El correo o la contraseña son incorrectos' });
-      }
-    } catch (error) {
-      Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Ocurrió un error' });
-    }
+    })();
   };
 
   const handleRegister = (e) => {
@@ -149,25 +166,60 @@ const SesionPage = ({ onLoginSuccess }) => {
 
     (async () => {
       try {
+        // Verificar si el correo ya está registrado
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        if (methods && methods.length > 0) {
+          await Swal.fire({
+            icon: 'info',
+            title: 'Correo ya registrado',
+            text: 'Este correo ya tiene una cuenta. Inicia sesión o usa "Olvidé mi contraseña".',
+          });
+          setView('login');
+          return;
+        }
+
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         const user = cred.user;
         await updateProfile(user, { displayName: name.trim() });
-        await setDoc(doc(db, 'users', user.uid), {
-          name: name.trim(),
-          email: user.email,
-          role: 'user',
-          createdAt: serverTimestamp(),
-        });
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            name: name.trim(),
+            email: user.email,
+            role: 'user',
+            createdAt: serverTimestamp(),
+          });
+        } catch (e) {
+          console.warn('No se pudo guardar el perfil en Firestore (continuando de todos modos):', e);
+        }
 
+        const role = user.email === ADMIN_EMAIL ? 'admin' : 'user';
         Swal.fire({
           icon: 'success',
           title: 'Registro exitoso',
-          text: 'Ahora puedes iniciar sesión',
-          timer: 1500,
+          text: 'Tu cuenta ha sido creada. Entrando a la aplicación...',
+          timer: 1200,
           showConfirmButton: false,
-        }).then(() => setView('login'));
+        }).then(() => onLoginSuccess && onLoginSuccess({ email: user.email, role, name: name.trim() }));
       } catch (error) {
-        Swal.fire({ icon: 'error', title: 'Error de registro', text: error.message || 'Ocurrió un error' });
+        let msg = 'Ocurrió un error';
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            msg = 'El correo ya está en uso. Inicia sesión o usa "Olvidé mi contraseña".';
+            setView('login');
+            break;
+          case 'auth/invalid-email':
+            msg = 'El correo no es válido.';
+            break;
+          case 'auth/weak-password':
+            msg = 'La contraseña es muy débil. Usa al menos 6 caracteres.';
+            break;
+          case 'auth/network-request-failed':
+            msg = 'Problema de red. Verifica tu conexión.';
+            break;
+          default:
+            msg = error.message || msg;
+        }
+        Swal.fire({ icon: 'error', title: 'Error de registro', text: msg });
       }
     })();
   };
@@ -213,9 +265,11 @@ const SesionPage = ({ onLoginSuccess }) => {
             <input type="submit" value="Iniciar Sesion" />
             <button type="button" className="outline-light-btn" onClick={toggleToRegister}>Registrarse</button>
           </div>
+          <div style={{ marginTop: 8 }}>
+            <button type="button" className="provider-btn" onClick={handleForgotPassword}>Olvidé mi contraseña</button>
+          </div>
           <div className="provider-group">
             <button type="button" className="provider-btn" onClick={handleGuestAccess}>Entrar como Invitado</button>
-            <button type="button" className="provider-btn admin-btn" onClick={handleAdminDemo}>Entrar como Administrador</button>
             <div className="provider-separator">o</div>
             <button type="button" className="provider-btn google-btn" onClick={handleGoogleLogin}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{marginRight: '8px'}}>
