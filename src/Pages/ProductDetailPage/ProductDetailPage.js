@@ -65,7 +65,16 @@ const ProductDetailPage = () => {
     return (
       <div className="container py-5">
         <h3>Producto no encontrado</h3>
-        <button className="btn btn-outline-dark" onClick={() => navigate(-1)}>Volver</button>
+        <div className="mt-3">
+          <span
+            role="button"
+            onClick={() => navigate(-1)}
+            style={{ color: '#5c3a29', textDecoration: 'underline' }}
+          >
+            <i className="bi bi-arrow-left me-2"></i>
+            Volver a la tienda
+          </span>
+        </div>
       </div>
     );
   }
@@ -77,11 +86,20 @@ const ProductDetailPage = () => {
       minimumFractionDigits: 0,
     });
 
+  const rating = Math.max(0, Math.min(5, Math.round(Number(product.rating ?? 4))));
+
   return (
     <div className="container py-5">
-      <button className="btn btn-outline-dark mb-4" onClick={() => navigate(-1)}>
-        &larr; Volver
-      </button>
+      <div className="mb-3" style={{ fontSize: '.95rem' }}>
+        <span
+          role="button"
+          onClick={() => navigate(-1)}
+          style={{ color: '#5c3a29', textDecoration: 'underline' }}
+        >
+          <i className="bi bi-arrow-left me-2"></i>
+          Volver a la tienda
+        </span>
+      </div>
       <div className="row g-4">
         <div className="col-md-6 order-2 order-md-1">
           <div className="d-flex gap-2 mb-3 overflow-auto">
@@ -106,7 +124,17 @@ const ProductDetailPage = () => {
           )}
         </div>
         <div className="col-md-6">
-          <h2 className="fw-bold mb-3">{product.name}</h2>
+          <h2 className="fw-bold mb-1">{product.name}</h2>
+          <div className="mb-3" aria-label={`Calificación ${rating} de 5`}>
+            {[0,1,2,3,4].map(i => (
+              <i
+                key={i}
+                className={i < rating ? 'bi bi-star-fill me-1' : 'bi bi-star me-1'}
+                style={{ color: '#f5a524' }}
+              />
+            ))}
+            <small className="text-muted">{rating}/5</small>
+          </div>
           <p className="text-muted mb-3">{product.description}</p>
           <h4 className="fw-bold mb-4">{formatCurrency(product.price)}</h4>
           <button className="btn btn-dark" onClick={() => { addToCart(product); navigate('/cart'); }}>Añadir al carrito</button>

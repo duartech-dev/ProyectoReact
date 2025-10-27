@@ -37,6 +37,27 @@
   border-color: #4a2e1f !important;
 }
 
+/* Botones marrones reutilizables */
+.btn-brown {
+  background-color: #5c3a29 !important;
+  color: #fff !important;
+  border: 1px solid #5c3a29 !important;
+}
+.btn-brown:hover, .btn-brown:focus {
+  background-color: #4a2e1f !important;
+  border-color: #4a2e1f !important;
+}
+.btn-brown-outline {
+  background-color: transparent !important;
+  color: #5c3a29 !important;
+  border: 1px solid #5c3a29 !important;
+}
+.btn-brown-outline:hover, .btn-brown-outline:focus {
+  background-color: rgba(92,58,41,.08) !important;
+  color: #4a2e1f !important;
+  border-color: #4a2e1f !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
