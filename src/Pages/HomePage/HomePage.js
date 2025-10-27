@@ -13,8 +13,8 @@ import products from '../../data/products';
 // Imágenes para el carrusel y productos desde public/assets
 const carouselImages = [
   '/assets/22-ABRIL-scaled-1.jpg',
-  '/assets/closet.jpg',
-  '/assets/puerta.jpg',
+  '/assets/bar.avif',
+  '/assets/b.avif',
 ];
 
 // Lista de categorías calculadas a partir de productos combinados
@@ -144,7 +144,7 @@ function HomePage({ userEmail, onLogout }) {
           <div className="row">
             {/* Columna izquierda - Nombre y navegación */}
             <div className="col-md-4">
-              <h3 className="footer-title">DECOCENTER</h3>
+              <h3 className="footer-title">DecoCenter</h3>
               <ul className="footer-nav">
                 <li><button className="btn btn-link p-0 text-white text-decoration-none" onClick={goHome}>Inicio</button></li>
                 <li><button className="btn btn-link p-0 text-white text-decoration-none" onClick={() => navigate('/contact')}>Contactenos</button></li>

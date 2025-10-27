@@ -244,6 +244,9 @@
     background-color: rgba(255,255,255,.15);
 }
 @media (max-width: 600px) {
+  .sesion-root {
+    padding: 0 16px; /* quitar padding derecho que descuadra y centrar */
+  }
   .container-form {
     height: auto;
     flex-direction: column;
@@ -287,5 +290,10 @@
   .sign-in.active { display: block; }
   .sign-up.active { display: none; }
   .outline-light-btn { display: block; } /* mostrar botón Registrarse en móvil/tablet */
+  .mobile-only { display: block; }
 }
+
+/* Enlace tipo texto para volver en móvil */
+.mobile-only { display: none; margin-top: .5rem; text-align: center; }
+.mobile-link { background: transparent; border: 0; color: #fff; text-decoration: underline; cursor: pointer; }
 

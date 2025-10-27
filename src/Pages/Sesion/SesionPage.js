@@ -251,6 +251,9 @@ const SesionPage = ({ onLoginSuccess }) => {
           <input type="password" placeholder="Contraseña" name="password" value={registerForm.password} onChange={handleRegisterChange} />
           <input type="password" placeholder="Confirmar contraseña" name="confirmPassword" value={registerForm.confirmPassword} onChange={handleRegisterChange} />
           <input type="submit" value="Registrarse" />
+          <div className="mobile-only">
+            <button type="button" className="mobile-link" onClick={toggleToLogin}>¿Ya tienes cuenta? Iniciar sesión</button>
+          </div>
         </form>
       </div>
 
