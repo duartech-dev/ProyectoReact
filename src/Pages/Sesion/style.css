@@ -6,7 +6,7 @@
 }
 
 .sesion-root {
-    height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,12 +15,12 @@
     background-repeat: no-repeat;
     background-size: cover;
     color: #fff;
-    padding: 0 30px 0 0;
+    padding: 80px 16px 16px; /* dejar espacio para navbar fija y laterales simétricos */
 }
 
 .container-form {
     width: 90%;
-    height: 90vh;
+    min-height: auto;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -244,9 +244,7 @@
     background-color: rgba(255,255,255,.15);
 }
 @media (max-width: 600px) {
-  .sesion-root {
-    padding: 0 16px; /* quitar padding derecho que descuadra y centrar */
-  }
+  .sesion-root { padding: 80px 16px 16px; }
   .container-form {
     height: auto;
     flex-direction: column;
@@ -254,6 +252,9 @@
     padding: 1rem 0;
     justify-content: center; /* centrar verticalmente el bloque activo */
     align-items: center;     /* centrar horizontalmente el formulario */
+    width: 100%;
+    max-width: 520px;        /* limitar el ancho total del bloque */
+    margin: 0 auto;          /* centrar bloque contenedor */
   }
   .welcome-back {
     display: none;
@@ -261,7 +262,7 @@
   .formulario {
     width: 100%;
     max-width: 420px;
-    margin: 0 1rem 1rem;
+    margin: 0 auto 1rem;     /* centrar exactamente */
   }
   .create-account { padding: 1rem 0; }
   .cuenta-gratis { padding: .5rem 0; }
