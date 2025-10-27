@@ -280,6 +280,12 @@
   .actions-row .outline-light-btn {
     width: 100%;
   }
+  /* Aumentar tamaño del botón Iniciar Sesión en móvil */
+  .actions-row input[type="submit"] {
+    display: block;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+  }
   .provider-group .provider-btn {
     width: 100%;
   }
