@@ -31,6 +31,31 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
     setHistory([]);
   };
 
+  const nextStatus = (s) => {
+    if (s === 'En proceso') return 'Enviado';
+    if (s === 'Enviado') return 'Entregado';
+    return 'Entregado';
+  };
+
+  const advanceStatus = async (index) => {
+    const current = history[index];
+    if (!current) return;
+    const proposed = nextStatus(current.status || 'En proceso');
+    const res = await Swal.fire({
+      icon: 'question',
+      title: 'Actualizar estado de entrega',
+      text: `¿Cambiar de "${current.status || 'En proceso'}" a "${proposed}"?`,
+      showCancelButton: true,
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar',
+    });
+    if (!res.isConfirmed) return;
+    const newHist = history.map((h, i) => i === index ? { ...h, status: proposed, updatedAt: new Date().toISOString() } : h);
+    setHistory(newHist);
+    try { localStorage.setItem('purchase_history', JSON.stringify(newHist)); } catch(_) {}
+    Swal.fire({ icon: 'success', title: 'Estado actualizado', timer: 1200, showConfirmButton: false });
+  };
+
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -124,6 +149,7 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
                     <th>Referencia</th>
                     <th>Fecha</th>
                     <th>Método</th>
+                    <th>Entrega</th>
                     <th>Total</th>
                     <th>Detalle</th>
                   </tr>
@@ -134,6 +160,18 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
                       <td>{h.reference}</td>
                       <td>{new Date(h.createdAt).toLocaleString('es-CO')}</td>
                       <td>{h.method}</td>
+                      <td>
+                        <span className="badge rounded-pill" style={{ backgroundColor: '#eae1db', color: '#5c3a29' }}>
+                          {h.status || 'En proceso'}
+                        </span>
+                        <button
+                          className="btn btn-sm btn-brown-outline ms-2"
+                          onClick={() => advanceStatus(idx)}
+                          disabled={(h.status || 'En proceso') === 'Entregado'}
+                        >
+                          Avanzar
+                        </button>
+                      </td>
                       <td>{formatCurrency(h.total)}</td>
                       <td>
                         <button className="btn btn-sm btn-outline-dark" onClick={() => {
