@@ -8,7 +8,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProjectsMenu from '../ProjectsPage/ProjectsMenu';
 import Products from './Products';
 import { listenAllProducts } from '../../services/productsService';
-import products from '../../data/products';
 
 // Imágenes para el carrusel y productos desde public/assets
 const carouselImages = [
@@ -39,7 +38,7 @@ function HomePage({ userEmail, onLogout }) {
     return () => unsub && unsub();
   }, []);
 
-  const allProducts = useMemo(() => [...products, ...remoteProducts], [remoteProducts]);
+  const allProducts = useMemo(() => remoteProducts, [remoteProducts]);
 
   const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
 

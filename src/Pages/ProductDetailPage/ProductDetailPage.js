@@ -1,7 +1,6 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { useParams, useNavigate } from 'react-router-dom';
-import baseProducts from '../../data/products';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -10,19 +9,12 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const allProducts = useMemo(() => baseProducts, []);
-  const [product, setProduct] = useState(() => allProducts.find((p) => p.id.toString() === id) || null);
+  const [product, setProduct] = useState(null);
   const { addToCart } = useContext(CartContext);
-  const [selectedImage, setSelectedImage] = useState(product ? product.image : '');
+  const [selectedImage, setSelectedImage] = useState('');
 
   useEffect(() => {
     let ignore = false;
-    const local = allProducts.find((p) => p.id.toString() === id);
-    if (local) {
-      setProduct(local);
-      setSelectedImage(local.image);
-      return;
-    }
     (async () => {
       try {
         const ref = doc(db, 'products', id);
@@ -42,7 +34,7 @@ const ProductDetailPage = () => {
       }
     })();
     return () => { ignore = true; };
-  }, [id, allProducts]);
+  }, [id]);
 
   if (!product) {
     return (

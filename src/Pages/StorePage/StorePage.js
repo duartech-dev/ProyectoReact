@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { listenAllProducts } from '../../services/productsService';
-import products from '../../data/products';
 
 const StorePage = ({ userEmail, userRole, onLogout }) => {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ const StorePage = ({ userEmail, userRole, onLogout }) => {
     return () => unsub && unsub();
   }, []);
 
-  const allProducts = useMemo(() => [...products, ...remoteProducts], [remoteProducts]);
+  const allProducts = useMemo(() => remoteProducts, [remoteProducts]);
 
   const categories = useMemo(() => ['Todos', ...Array.from(new Set(allProducts.map((p) => p.category)))], [allProducts]);
 
