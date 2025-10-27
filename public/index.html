@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link id="dynamic-favicon" rel="icon" href="%PUBLIC_URL%/assets/Sierra.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -28,11 +28,43 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>DecoCenter</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      (function () {
+        try {
+          const src = (window.PUBLIC_URL || '') + '/assets/Sierra.svg';
+          const link = document.getElementById('dynamic-favicon');
+          if (!link) return;
+          const img = new Image();
+          img.src = src;
+          img.onload = function () {
+            const size = 32;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = size; canvas.height = size;
+            let angle = 0;
+            const draw = () => {
+              ctx.clearRect(0, 0, size, size);
+              ctx.save();
+              ctx.translate(size/2, size/2);
+              ctx.rotate(angle);
+              const scale = 0.9; // pequeño padding para que no se recorte
+              const w = size * scale, h = size * scale;
+              ctx.drawImage(img, -w/2, -h/2, w, h);
+              ctx.restore();
+              link.href = canvas.toDataURL('image/png');
+              angle += Math.PI / 60; // ~3 rpm (360deg en ~4s)
+            };
+            draw();
+            setInterval(draw, 100);
+          };
+        } catch (e) { /* no-op si el navegador bloquea */ }
+      })();
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

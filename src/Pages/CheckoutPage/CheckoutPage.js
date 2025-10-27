@@ -11,8 +11,6 @@ const CheckoutPage = ({ userEmail }) => {
   const { cartItems, totalPrice, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
   const [paid, setPaid] = useState(false);
-  // Controla si el widget de Wompi ya está disponible
-  const [wompiReady, setWompiReady] = useState(false);
 
   const formatCurrency = (value) =>
     value.toLocaleString('es-MX', {
@@ -49,6 +47,8 @@ const CheckoutPage = ({ userEmail }) => {
 
     const renderButtons = () => {
       if (window.paypal) {
+        const container = document.getElementById('paypal-buttons-container');
+        if (container) container.innerHTML = '';
         window.paypal.Buttons({
           style: {
             layout: 'vertical',
@@ -93,56 +93,7 @@ const CheckoutPage = ({ userEmail }) => {
     }
   }, [totalPrice, paid, clearCart]);
 
-  // Cargar script de Wompi (Nequi / Davivienda)
-  useEffect(() => {
-    if (wompiReady) return; // Ya cargado
-    const existing = document.querySelector('script[src^="https://checkout.wompi.co/widget.js"]');
-    const onLoad = () => setWompiReady(true);
-
-    if (!existing) {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.wompi.co/widget.js';
-      script.addEventListener('load', onLoad);
-      document.body.appendChild(script);
-    } else {
-      setWompiReady(true);
-    }
-  }, [wompiReady]);
-
-  // Abrir widget con método seleccionado
-  const handleWompiPayment = (paymentMethod) => {
-    if (!wompiReady) {
-      alert('La pasarela de pago aún se está cargando, intenta nuevamente en unos segundos.');
-      return;
-    }
-    const publicKey = process.env.REACT_APP_WOMPI_PUBLIC_KEY;
-    if (!publicKey) {
-      alert('Falta configurar la variable REACT_APP_WOMPI_PUBLIC_KEY');
-      return;
-    }
-
-    const amountInCents = Math.round(totalPrice * 100);
-    const reference = `order-${Date.now()}`;
-
-    const checkout = new window.WidgetCheckout({
-      publicKey,
-      currency: 'COP',
-      amountInCents,
-      reference,
-      redirectUrl: window.location.href,
-      paymentMethod, // 'NEQUI' o 'PSE'
-    });
-
-    checkout.open((result) => {
-      if (result && result.transaction && result.transaction.status === 'APPROVED') {
-        setPaid(true);
-        saveOrder({ userEmail, items: cartItems, total: totalPrice }).catch(console.error);
-        clearCart();
-      } else if (result && result.transaction) {
-        alert(`Transacción ${result.transaction.status}`);
-      }
-    });
-  };
+  // Eliminado Wompi (Nequi/Davivienda) temporalmente
 
   if (paid) {
     return (
@@ -169,18 +120,13 @@ const CheckoutPage = ({ userEmail }) => {
         </li>
       </ul>
 
-      {/* Botones de Nequi y Davivienda */}
-      <div className="mb-4 text-center">
-        <button className="btn btn-success me-2" onClick={() => handleWompiPayment('NEQUI')}>
-          <i className="bi bi-phone"></i> Pagar con Nequi
-        </button>
-        <button className="btn btn-danger" onClick={() => handleWompiPayment('PSE')}>
-          <i className="bi bi-bank"></i> Pagar con Davivienda
-        </button>
+      {/* Métodos de pago */}
+      <div className="card mb-4">
+        <div className="card-header fw-bold">Métodos de pago</div>
+        <div className="card-body">
+          <div id="paypal-buttons-container" className="text-center"></div>
+        </div>
       </div>
-
-      {/* Botones de PayPal */}
-      <div id="paypal-buttons-container" className="mb-4 text-center"></div>
 
       <button className="btn btn-outline-dark" onClick={() => navigate('/cart')}>Volver al carrito</button>
       {/* Simulamos pago éxito temporal */}
