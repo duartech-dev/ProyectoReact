@@ -252,6 +252,8 @@
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem 0;
+    justify-content: center; /* centrar verticalmente el bloque activo */
+    align-items: center;     /* centrar horizontalmente el formulario */
   }
   .welcome-back {
     display: none;
