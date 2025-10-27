@@ -10,6 +10,8 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const { addToCart } = useContext(CartContext);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -17,6 +19,8 @@ const ProductDetailPage = () => {
     let ignore = false;
     (async () => {
       try {
+        setLoading(true);
+        setNotFound(false);
         const ref = doc(db, 'products', id);
         const snap = await getDoc(ref);
         if (!ignore) {
@@ -25,19 +29,39 @@ const ProductDetailPage = () => {
             setProduct(data);
             const initialImg = data.image || (Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : '');
             setSelectedImage(initialImg);
+            setNotFound(false);
           } else {
             setProduct(null);
+            setNotFound(true);
           }
         }
       } catch (e) {
         console.error('Error cargando producto:', e);
-        if (!ignore) setProduct(null);
+        if (!ignore) {
+          setProduct(null);
+          setNotFound(true);
+        }
+      }
+      finally {
+        if (!ignore) setLoading(false);
       }
     })();
     return () => { ignore = true; };
   }, [id]);
 
-  if (!product) {
+  if (loading) {
+    return (
+      <div className="container py-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+          <div className="spinner-border" role="status" style={{ color: '#5c3a29' }}>
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound || !product) {
     return (
       <div className="container py-5">
         <h3>Producto no encontrado</h3>
