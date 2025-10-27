@@ -20,12 +20,45 @@ const AdminPage = ({ userRole }) => {
     setForm((f) => ({ ...f, [name]: name === 'price' ? value.replace(/[^0-9.]/g, '') : value }));
   };
 
-  const handleFileChange = (e) => {
+  const resizeImage = (file, { maxWidth = 1024, maxHeight = 1024, quality = 0.8 } = {}) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(width * ratio);
+          canvas.height = Math.round(height * ratio);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const out = canvas.toDataURL('image/jpeg', quality);
+          resolve(out);
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+  const handleFileChange = async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setForm((f) => ({ ...f, image: reader.result }));
-    reader.readAsDataURL(file);
+    try {
+      const dataUrl = await resizeImage(file, { maxWidth: 1280, maxHeight: 1280, quality: 0.75 });
+      // Seguridad: Firestore tiene límite ~1MB por documento
+      const approxBytes = Math.ceil((dataUrl.length * 3) / 4);
+      if (approxBytes > 900 * 1024) {
+        Swal.fire({ icon: 'warning', title: 'Imagen muy grande', text: 'Reduce la resolución o elige otra imagen (máx ~900KB).' });
+        return;
+      }
+      setForm((f) => ({ ...f, image: dataUrl }));
+    } catch (err) {
+      console.error('Image resize error', err);
+      Swal.fire({ icon: 'error', title: 'Error con la imagen', text: 'No se pudo procesar la imagen seleccionada.' });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -51,7 +84,10 @@ const AdminPage = ({ userRole }) => {
       setForm(initial);
     } catch (err) {
       console.error('Create product error:', err);
-      Swal.fire({ icon: 'error', title: 'No se pudo guardar el producto' });
+      const msg = err?.code === 'permission-denied'
+        ? 'No tienes permisos para crear productos. Inicia sesión como administrador.'
+        : 'No se pudo guardar el producto';
+      Swal.fire({ icon: 'error', title: msg });
     }
   };
 
