@@ -1,4 +1,6 @@
 import { useContext } from "react";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
@@ -16,6 +18,22 @@ export default function Navbar({ user, onLogout, onRequireAuth }) {
     } else {
       // Fallback: quitar la clase 'show' si por alguna razón no está la API
       el.classList.remove('show');
+    }
+  };
+
+  const handleLogoutClick = async () => {
+    const res = await Swal.fire({
+      icon: 'question',
+      title: '¿Seguro que deseas salir?',
+      text: 'Tu sesión se cerrará y se vaciará el carrito.',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, salir',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+    });
+    if (res.isConfirmed) {
+      closeMenu();
+      onLogout && onLogout();
     }
   };
 
@@ -58,7 +76,7 @@ export default function Navbar({ user, onLogout, onRequireAuth }) {
               Iniciar sesión
             </button>
           ) : (
-            <button className="btn btn-outline-secondary" onClick={() => { closeMenu(); onLogout && onLogout(); }}>Cerrar sesión</button>
+            <button className="btn btn-outline-secondary" onClick={handleLogoutClick}>Cerrar sesión</button>
           )}
         </div>
       </div>
