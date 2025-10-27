@@ -4,11 +4,11 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .dc-input:hover {
-  border-color: #9aa4b2 !important;
+  border-color: #9c6d3b !important; /* marrón medio */
 }
 .dc-input:focus {
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15) !important;
+  border-color: #9c6d3b !important;
+  box-shadow: 0 0 0 0.2rem rgba(156,109,59,.2) !important;
 }
 
 /* Variante marrón para Promociones */

@@ -11,6 +11,7 @@ import ProductDetailPage from './Pages/ProductDetailPage/ProductDetailPage';
 import CartPage from './Pages/CartPage/CartPage';
 import StorePage from './Pages/StorePage/StorePage';
 import PromotionsPage from './Pages/PromotionsPage/PromotionsPage';
+import PromotionDetailPage from './Pages/PromotionDetailPage/PromotionDetailPage';
 import ContactPage from './Pages/ContactPage/ContactPage';
 import CheckoutPage from './Pages/CheckoutPage/CheckoutPage';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
@@ -66,6 +67,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage userEmail={user?.email} />} />
               <Route path="/store" element={<StorePage userEmail={user?.email} userRole={user?.role} onLogout={handleLogout} />} />
               <Route path="/promotions" element={<PromotionsPage userRole={user?.role} />} />
+              <Route path="/promotion/:id" element={<PromotionDetailPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/proyectos/*" element={
                 <ProjectsProtectedRoute userEmail={user?.email}>

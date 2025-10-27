@@ -282,8 +282,19 @@ html, body {
 }
 
 .footer-nav a:hover {
-  opacity: 0.8;
-  color: white;
+  opacity: 0.9;
+  color: #f1e5dc; /* tono claro de la paleta, evita azul por defecto */
+  text-decoration: none;
+}
+
+/* Botón tipo link dentro del footer (como 'Contáctenos') */
+.footer-nav .btn-link {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+.footer-nav .btn-link:hover {
+  color: #f1e5dc !important; /* hover personalizado */
+  text-decoration: none !important;
 }
 
 .footer-description {

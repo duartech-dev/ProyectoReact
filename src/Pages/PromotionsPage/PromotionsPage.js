@@ -1,13 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { listenAllPromotions, createPromotion, updatePromotion, deletePromotion } from '../../services/promotionsService';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/forms.css';
+import { CartContext } from '../../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
-const initial = { id: null, name: '', price: '', discount: '0', image: '' };
+const initial = { id: null, name: '', description: '', price: '', discount: '0', image: '' };
 
 const PromotionsPage = ({ userRole }) => {
+  const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
   const [form, setForm] = useState(initial);
   const [imageFile, setImageFile] = useState(null);
   const [promos, setPromos] = useState([]);
@@ -48,6 +52,7 @@ const PromotionsPage = ({ userRole }) => {
     if (!form.name.trim() || !form.price || !form.image) return;
     const data = {
       name: form.name.trim(),
+      description: (form.description || '').trim(),
       price: Number(form.price) || 0,
       discount: Math.min(Math.max(Number(form.discount) || 0, 0), 100),
       image: form.image,
@@ -90,6 +95,10 @@ const PromotionsPage = ({ userRole }) => {
   const canEdit = userRole === 'admin';
   const inputClass = 'form-control dc-input dc-input-brown';
 
+  const handleView = (p) => {
+    navigate(`/promotion/${p.id}`);
+  };
+
   return (
     <div className="container py-4">
       <h2 className="fw-bold mb-3">Promociones</h2>
@@ -117,6 +126,10 @@ const PromotionsPage = ({ userRole }) => {
             </div>
           )}
         </div>
+        <div className="col-12">
+          <label className="form-label">Descripción</label>
+          <textarea className={inputClass} rows={3} name="description" value={form.description} onChange={handleChange} placeholder="Detalles de la promoción"></textarea>
+        </div>
         <div className="col-12 d-flex gap-2">
           <button className="btn btn-dark" type="submit">{form.id ? 'Actualizar' : 'Agregar'}</button>
           {form.id && (
@@ -130,7 +143,13 @@ const PromotionsPage = ({ userRole }) => {
         {promos.length === 0 && <p className="text-muted">Aún no hay promociones.</p>}
         {promos.map((p) => (
           <div key={p.id} className="col-12 col-md-6 col-lg-4">
-            <div className="card h-100 shadow-sm">
+            <div
+              className="card h-100 shadow-sm"
+              style={{ cursor: 'pointer' }}
+              onClick={() => handleView(p)}
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleView(p); } }}
+            >
               <img src={p.image} className="card-img-top" alt={p.name} style={{ objectFit: 'cover', height: 180 }} />
               <div className="card-body">
                 {p.discount > 0 && (
