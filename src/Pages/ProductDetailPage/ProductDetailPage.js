@@ -23,7 +23,8 @@ const ProductDetailPage = () => {
           if (snap.exists()) {
             const data = { id: snap.id, ...snap.data() };
             setProduct(data);
-            setSelectedImage(data.image || '');
+            const initialImg = data.image || (Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : '');
+            setSelectedImage(initialImg);
           } else {
             setProduct(null);
           }
@@ -60,7 +61,7 @@ const ProductDetailPage = () => {
       <div className="row g-4">
         <div className="col-md-6 order-2 order-md-1">
           <div className="d-flex gap-2 mb-3 overflow-auto">
-            {[product.image, product.image, product.image].filter(Boolean).map((img, idx) => (
+            {(Array.isArray(product.images) && product.images.length > 0 ? product.images.slice(0,4) : [product.image]).filter(Boolean).map((img, idx) => (
               <img
                 key={idx}
                 src={img}

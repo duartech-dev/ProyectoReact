@@ -4,7 +4,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import { listenAllProducts, createProduct, updateProduct, deleteProduct } from '../../services/productsService';
 import '../../styles/forms.css';
 
-const initial = { id: null, name: '', description: '', category: '', price: '', image: '' };
+const initial = { id: null, name: '', description: '', category: '', price: '', image: '', images: [] };
 
 const AdminPage = ({ userRole }) => {
   const [form, setForm] = useState(initial);
@@ -44,20 +44,24 @@ const AdminPage = ({ userRole }) => {
     });
 
   const handleFileChange = async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     try {
-      const dataUrl = await resizeImage(file, { maxWidth: 1280, maxHeight: 1280, quality: 0.75 });
-      // Seguridad: Firestore tiene límite ~1MB por documento
-      const approxBytes = Math.ceil((dataUrl.length * 3) / 4);
-      if (approxBytes > 900 * 1024) {
-        Swal.fire({ icon: 'warning', title: 'Imagen muy grande', text: 'Reduce la resolución o elige otra imagen (máx ~900KB).' });
-        return;
+      const max = 4;
+      const resized = [];
+      for (let i = 0; i < Math.min(files.length, max); i++) {
+        const dataUrl = await resizeImage(files[i], { maxWidth: 1280, maxHeight: 1280, quality: 0.75 });
+        const approxBytes = Math.ceil((dataUrl.length * 3) / 4);
+        if (approxBytes > 900 * 1024) {
+          Swal.fire({ icon: 'warning', title: 'Imagen muy grande', text: 'Reduce la resolución o elige otra imagen (máx ~900KB por imagen).' });
+          return;
+        }
+        resized.push(dataUrl);
       }
-      setForm((f) => ({ ...f, image: dataUrl }));
+      setForm((f) => ({ ...f, images: resized, image: resized[0] || f.image }));
     } catch (err) {
       console.error('Image resize error', err);
-      Swal.fire({ icon: 'error', title: 'Error con la imagen', text: 'No se pudo procesar la imagen seleccionada.' });
+      Swal.fire({ icon: 'error', title: 'Error con la imagen', text: 'No se pudo procesar la(s) imagen(es).' });
     }
   };
 
@@ -73,6 +77,7 @@ const AdminPage = ({ userRole }) => {
         category: form.category.trim(),
         price: isNaN(priceNum) ? 0 : priceNum,
         image: (form.image || '').trim(),
+        images: Array.isArray(form.images) ? form.images.slice(0, 4) : [],
       };
       if (form.id) {
         await updateProduct(form.id, payload);
@@ -120,6 +125,7 @@ const AdminPage = ({ userRole }) => {
     category: p.category || '',
     price: String(p.price ?? ''),
     image: p.image || '',
+    images: Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []),
   });
 
   const handleCancel = () => setForm(initial);
@@ -142,11 +148,13 @@ const AdminPage = ({ userRole }) => {
             <input className={inputClass} name="price" value={form.price} onChange={handleChange} required />
           </div>
           <div className="col-12">
-            <label className="form-label">Imagen</label>
-            <input type="file" accept="image/*" className={inputClass} onChange={handleFileChange} required />
-            {form.image && (
-              <div className="mt-2">
-                <img src={form.image} alt="preview" height={80} style={{ objectFit: 'cover', borderRadius: 6 }} />
+            <label className="form-label">Imágenes (máx 4)</label>
+            <input type="file" accept="image/*" multiple className={inputClass} onChange={handleFileChange} required={!form.id} />
+            {(form.images && form.images.length > 0) && (
+              <div className="mt-2 d-flex gap-2 flex-wrap">
+                {form.images.map((src, idx) => (
+                  <img key={idx} src={src} alt={`preview-${idx}`} height={80} style={{ objectFit: 'cover', borderRadius: 6, border: src===form.image? '2px solid #5c3a29':'1px solid #ccc', cursor:'pointer' }} onClick={() => setForm((f)=>({...f, image: src}))} />
+                ))}
               </div>
             )}
           </div>

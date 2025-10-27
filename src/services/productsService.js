@@ -17,7 +17,8 @@ export const createProduct = async (data) => {
     description: data.description || '',
     category: data.category || '',
     price: Number(data.price) || 0,
-    image: data.image || '',
+    images: Array.isArray(data.images) ? data.images.slice(0, 4) : [],
+    image: data.image || (Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : ''),
     createdAt: serverTimestamp(),
   };
   const ref = await addDoc(colRef, payload);
@@ -31,7 +32,8 @@ export const updateProduct = async (id, data) => {
     description: data.description || '',
     category: data.category || '',
     price: Number(data.price) || 0,
-    image: data.image || '',
+    images: Array.isArray(data.images) ? data.images.slice(0, 4) : [],
+    image: data.image || (Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : ''),
   });
 };
 

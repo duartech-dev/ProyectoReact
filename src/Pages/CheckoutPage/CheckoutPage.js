@@ -123,8 +123,8 @@ const CheckoutPage = ({ userEmail }) => {
       {/* Métodos de pago */}
       <div className="card mb-4">
         <div className="card-header fw-bold">Métodos de pago</div>
-        <div className="card-body">
-          <div id="paypal-buttons-container" className="text-center"></div>
+        <div className="card-body d-flex justify-content-center">
+          <div id="paypal-buttons-container" style={{ width: '100%', maxWidth: 460 }}></div>
         </div>
       </div>
 
