@@ -13,6 +13,30 @@
   }
 }
 
+/* SweetAlert2 tema marrón para botones */
+.swal2-styled.swal2-confirm {
+  background-color: #5c3a29 !important;
+  border: 1px solid #5c3a29 !important;
+  box-shadow: none !important;
+}
+.swal2-styled.swal2-confirm:hover,
+.swal2-styled.swal2-confirm:focus {
+  background-color: #4a2e1f !important;
+  border-color: #4a2e1f !important;
+  box-shadow: 0 0 0 0.2rem rgba(92, 58, 41, 0.25) !important;
+}
+.swal2-styled.swal2-cancel {
+  background-color: transparent !important;
+  color: #5c3a29 !important;
+  border: 1px solid #5c3a29 !important;
+}
+.swal2-styled.swal2-cancel:hover,
+.swal2-styled.swal2-cancel:focus {
+  background-color: rgba(92,58,41,.08) !important;
+  color: #4a2e1f !important;
+  border-color: #4a2e1f !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

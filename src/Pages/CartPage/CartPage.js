@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { CartContext } from '../../context/CartContext';
@@ -16,12 +16,30 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
       minimumFractionDigits: 2,
     });
 
+  const [history, setHistory] = useState([]);
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('purchase_history') || '[]');
+      setHistory(Array.isArray(data) ? data : []);
+    } catch { setHistory([]); }
+  }, []);
+
+  const [showHistory, setShowHistory] = useState(false);
+
+  const clearHistory = () => {
+    localStorage.removeItem('purchase_history');
+    setHistory([]);
+  };
+
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold">Carrito</h2>
         <div className="d-flex gap-2">
           <button className="btn btn-outline-dark" onClick={() => navigate('/')}>Seguir comprando</button>
+          <button className="btn btn-outline-secondary" onClick={() => setShowHistory(s=>!s)}>
+            {showHistory ? 'Ocultar historial' : 'Ver historial'}
+          </button>
         </div>
       </div>
       {cartItems.length === 0 ? (
@@ -89,8 +107,84 @@ const CartPage = ({ onLogout, isGuest, onRequireAuth }) => {
           </div>
         </>
       )}
+
+      {showHistory && (
+        <div className="mt-5">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h5 className="mb-0">Historial de compras (local)</h5>
+            <button className="btn btn-outline-secondary btn-sm" onClick={clearHistory}>Limpiar historial</button>
+          </div>
+          {history.length === 0 ? (
+            <p className="text-muted">No hay compras registradas.</p>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-sm align-middle">
+                <thead>
+                  <tr>
+                    <th>Referencia</th>
+                    <th>Fecha</th>
+                    <th>Método</th>
+                    <th>Total</th>
+                    <th>Detalle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.map((h, idx) => (
+                    <tr key={idx}>
+                      <td>{h.reference}</td>
+                      <td>{new Date(h.createdAt).toLocaleString('es-CO')}</td>
+                      <td>{h.method}</td>
+                      <td>{formatCurrency(h.total)}</td>
+                      <td>
+                        <button className="btn btn-sm btn-outline-dark" onClick={() => {
+                          const rows = (h.items||[]).map(it => `
+                            <tr>
+                              <td style="padding:6px 8px;">${it.name}</td>
+                              <td style="padding:6px 8px; text-align:center;">${it.quantity}</td>
+                              <td style="padding:6px 8px; text-align:right;">${(it.price).toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0})}</td>
+                              <td style="padding:6px 8px; text-align:right;">${(it.price*it.quantity).toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0})}</td>
+                            </tr>
+                          `).join('');
+                          const html = `
+                            <div style="text-align:left">
+                              <div style="margin-bottom:6px; font-size:.9rem; opacity:.85;">Ref: <strong>${h.reference}</strong> · ${new Date(h.createdAt).toLocaleString('es-CO')}</div>
+                              <div style="margin-bottom:8px; font-size:.9rem;">
+                                <div><strong>Cliente:</strong> ${(h.customer?.name)||'N/A'} · <strong>Documento:</strong> ${(h.customer?.id)||'N/A'}</div>
+                                <div><strong>Tel:</strong> ${(h.customer?.phone)||'N/A'} · <strong>Direccion:</strong> ${(h.customer?.address)||'N/A'}</div>
+                                <div><strong>Email:</strong> ${h.userEmail||'N/A'}</div>
+                              </div>
+                              <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+                                <thead>
+                                  <tr>
+                                    <th style="text-align:left; padding:6px 8px; border-bottom:1px solid #eee;">Producto</th>
+                                    <th style="text-align:center; padding:6px 8px; border-bottom:1px solid #eee;">Cant.</th>
+                                    <th style="text-align:right; padding:6px 8px; border-bottom:1px solid #eee;">Precio</th>
+                                    <th style="text-align:right; padding:6px 8px; border-bottom:1px solid #eee;">Subtotal</th>
+                                  </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                                <tfoot>
+                                  <tr>
+                                    <td colspan="3" style="padding:8px; text-align:right; border-top:1px solid #eee;"><strong>Total</strong></td>
+                                    <td style="padding:8px; text-align:right; border-top:1px solid #eee;"><strong>${(h.total).toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0})}</strong></td>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>`;
+                          Swal.fire({ title: `Compra ${h.reference}`, html, confirmButtonText: 'Cerrar' });
+                        }}>Ver</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
-};
+}
+;
 
 export default CartPage;

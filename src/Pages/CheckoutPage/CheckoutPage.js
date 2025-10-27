@@ -83,6 +83,21 @@ const CheckoutPage = ({ userEmail }) => {
             return actions.order.capture()
               .then(() => {
                 setPaid(true);
+                try {
+                  const reference = `PP-${Date.now()}`;
+                  const entry = {
+                    reference,
+                    createdAt: new Date().toISOString(),
+                    method: 'PayPal',
+                    userEmail,
+                    customer: null,
+                    items: cartItems,
+                    total: totalPrice,
+                  };
+                  const hist = JSON.parse(localStorage.getItem('purchase_history') || '[]');
+                  hist.unshift(entry);
+                  localStorage.setItem('purchase_history', JSON.stringify(hist.slice(0, 50)));
+                } catch (_) {}
                 clearCart();
                 Swal.fire({ icon: 'success', title: 'Pago realizado con PayPal', timer: 1800, showConfirmButton: false });
               })
@@ -300,6 +315,13 @@ const CheckoutPage = ({ userEmail }) => {
                 cancelButtonText: 'Cancelar',
               });
               if (!confirmRes.isConfirmed) return;
+              // Guardar en historial local
+              try {
+                const entry = { reference, createdAt: now.toISOString(), method: 'Simulado', userEmail, customer, items: cartItems, total: totalPrice };
+                const hist = JSON.parse(localStorage.getItem('purchase_history') || '[]');
+                hist.unshift(entry);
+                localStorage.setItem('purchase_history', JSON.stringify(hist.slice(0, 50)));
+              } catch (_) {}
               clearCart();
               await Swal.fire({ icon: 'success', title: 'Pago realizado', text: `Ref: ${reference}`, timer: 1800, showConfirmButton: false });
               navigate('/');
@@ -307,6 +329,13 @@ const CheckoutPage = ({ userEmail }) => {
             }
 
             if (res.isDenied) {
+              // Guardar en historial local
+              try {
+                const entry = { reference, createdAt: now.toISOString(), method: 'Simulado', userEmail, customer, items: cartItems, total: totalPrice };
+                const hist = JSON.parse(localStorage.getItem('purchase_history') || '[]');
+                hist.unshift(entry);
+                localStorage.setItem('purchase_history', JSON.stringify(hist.slice(0, 50)));
+              } catch (_) {}
               clearCart();
               await Swal.fire({ icon: 'success', title: 'Pago realizado', text: `Ref: ${reference}`, timer: 1800, showConfirmButton: false });
               navigate('/');
