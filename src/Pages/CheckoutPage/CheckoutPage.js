@@ -89,6 +89,7 @@ const CheckoutPage = ({ userEmail }) => {
                     reference,
                     createdAt: new Date().toISOString(),
                     method: 'PayPal',
+                    status: 'En proceso',
                     userEmail,
                     customer: null,
                     items: cartItems,
@@ -317,7 +318,7 @@ const CheckoutPage = ({ userEmail }) => {
               if (!confirmRes.isConfirmed) return;
               // Guardar en historial local
               try {
-                const entry = { reference, createdAt: now.toISOString(), method: 'Simulado', userEmail, customer, items: cartItems, total: totalPrice };
+                const entry = { reference, createdAt: now.toISOString(), method: 'Simulado', status: 'En proceso', userEmail, customer, items: cartItems, total: totalPrice };
                 const hist = JSON.parse(localStorage.getItem('purchase_history') || '[]');
                 hist.unshift(entry);
                 localStorage.setItem('purchase_history', JSON.stringify(hist.slice(0, 50)));

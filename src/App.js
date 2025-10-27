@@ -81,9 +81,31 @@ function App() {
               } />
             </Routes>
           </div>
+          {/* Botón flotante de WhatsApp */}
+          <a
+            href={`https://wa.me/573001234567?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre un producto.')}`}
+            className="wa-float"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Contactar por WhatsApp"
+          >
+            <i className="bi bi-whatsapp"></i>
+          </a>
         </>
       ) : (
-        <SesionPage onLoginSuccess={handleLoginSuccess} />
+        <>
+          <SesionPage onLoginSuccess={handleLoginSuccess} />
+          {/* Botón flotante de WhatsApp (visible también en login) */}
+          <a
+            href={`https://wa.me/573001234567?text=${encodeURIComponent('Hola, me gustaría obtener más información.')}`}
+            className="wa-float"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Contactar por WhatsApp"
+          >
+            <i className="bi bi-whatsapp"></i>
+          </a>
+        </>
       )}
     </div>
   );
